@@ -1,0 +1,37 @@
+- Running on both iOS and Android tablets or mobile phones
+- Restaurant information
+	- Address
+	- Map location
+- Current restaurant's opening status, announcements
+	- Show and edit current opening status
+		- Opening day of weeks
+		- Opening hours
+		- Special closing dates
+	- Show and edit current announcements
+		- View, edit, disable (not show) announcement
+		- Edit announcement to/from date/time
+- Update menu
+	- CRUD menu groups
+	- CRUD menu items (food image, spicy levels, descriptions, price, status: available/not available)
+	- CRUD menu promotions
+- Orders
+	- View order history by month/year
+	- View current order
+- Analytics
+	- Members
+		- View current member list and spending per member per month
+		- View non-member orders (PDPA-aware) and spendings per non-member group
+	- Sell volumes
+		- View sell volumes per menu
+		- View best selling menu per month, quarter, year
+	- Loyalty Redemption history
+- Loyalty
+	- Enable or disable loyalty program
+	- Set loyalty conversion to AUD rate (default 1 point = 1 AUD)
+- Print order
+	- Integration with kitchen and counter thermal printers
+	- Print orders
+		- Print order to the Kitchen printer
+		- Print order slip for the customer at counter printer
+		- Print order slip for the restaurant (enable/disable) at counter printer
+- Print Z-Report

@@ -1,0 +1,23 @@
+- Accessible via Web Browser only
+- Restaurant view
+	- CRUD restaurants
+	- Enable/disable the restaurants
+- Reports
+	- Total order by restaurant by months
+	- Total platform taking report (Founder only)
+	- Total Founder & Co-Founder taking report (Founder & Co-founder only)
+- Fees Configuration
+	- Global fees applies to all restaurants
+		- Platform fees, administration fees, transaction fees
+		- Fees configurable in either percentage from final order price or fix amount or both
+	- Per-restaurant fees
+		- Platform fees, administration fees, transaction fees
+		- Fees configurable in either percentage from final order price or fix amount or both
+- Global Loyalty Point conversion rate setting 
+	- Global conversion rate
+	- Allow or disallow restaurant to override the rate
+- Maintenance mode with usage history of the app through hourly, daily, weekly and monthly access history
+	- Customer usage dashboard 
+	- Restaurant usage dashboard
+- Australian PDPA consent upload
+

@@ -1,0 +1,14 @@
+- This application is a food ordering application that provides Mobile Applications running on iOS and Android mobile phones
+- The customers can order foods with pick-up or delivery through the Mobile App of the specific restaurant:
+	- The customers can download restaurant app, 1 app 1 restaurant
+	- Members -> registered customers who provides delivery address, collect points, redeem points at checkout steps. Members must give consent according to Australian's Personal Data Privacy Acts
+	- Non-members -> non-registered customers
+	- Payment is done through Credit Cards via Stripe
+- The restaurants receives orders via a Restaurant App
+	- 1 Kitchen Mobile application for all restaurants with logins accounts for restaurants' admin and staff running on mini- or normal-sized-tablets which 
+	- Must register and approve by the System Admin
+	- Receive payment after fee deductions by the platform right after the customer payment completed
+- Backend Web admin is for the system administrators (Founder and Co-founder)
+	- Register, enable (approval), disable restaurants
+	- View transactions, order amounts, fees deductions, founders' dividend
+	- Configure fees (Stripe fee, Platform fees, founders' dividend portions) globally and per restaurants (if not specific, global fees will be applied)

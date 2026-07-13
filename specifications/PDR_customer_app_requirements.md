@@ -1,0 +1,27 @@
+- Running on both iOS and Android mobile phones
+- Login via email confirmation code
+- Display current restaurant's opening status, announcements
+- View menu group and promotion menus
+- Menu card shows a food image with overlay badges (promotion, popular, recommended), spiciness (4-level), descriptions <= 150 words, pricing
+- Able to add menu to the shopping basket with adjustable quantities, default is 1 portion
+- Select the shopping basket to view the orders and can go back to select more menu
+- At checkout, select if the order will be picked-up or delivered
+	- Pick-up at the restaurant will be referred to order id or member name if the member ordered the food that allow the customer to specify pick-up time of either now, in specific time with 30 mins apart from the current ordering time e.g. order at 12:12, the time to pickup would be 12:30, 13:00, .. on the same day before the restaurant closing time
+	- Delivery; delivery address must be provided with Australian's normal address format
+		- Show delivery address for selection for members
+		- Show address to fill in for non-members
+	- Payment page will show
+		- Food list with quality and costs
+		- Delivery costs if the delivery was selected
+		- Total charges
+		- Type of order: pickup or delivery with address information
+		- Show current points and the member can redeem points as discounts before payment
+		- Final payment amount after deductions
+	- Payment with credit card via Stipe
+- Order history shows
+	- In process orders
+	- History orders
+- Points available show on the front page of the app
+- Apply Australian PDPA
+	- Delete account
+	- Delete order history (redacted customer name and address but keep the order history for the restaurant)
