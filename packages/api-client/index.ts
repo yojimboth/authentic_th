@@ -122,6 +122,16 @@ apiClient.interceptors.request.use(async (config) => {
   if (url === '/payments/stripe' && method === 'post') {
     config.adapter = () => Promise.resolve({ data: { client_secret: 'pi_mock_secret_12345', paymentIntentId: 'pi_123' }, status: 200, statusText: 'OK', headers: {}, config });
   }
+
+  if (url === '/orders/confirm' && method === 'post') {
+    config.adapter = () => Promise.resolve({ 
+      data: { orderId: 'order_abc123', status: 'confirmed' }, 
+      status: 200, 
+      statusText: 'OK', 
+      headers: {}, 
+      config 
+    });
+  }
   
   return config;
 });
