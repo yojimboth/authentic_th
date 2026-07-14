@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, ScrollView, SafeAreaView } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useCartStore } from '../../../store/useCartStore';
 
 export const CartScreen = () => {
+  const navigation = useNavigation<any>();
   const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore();
   const total = getTotal();
 
@@ -58,7 +61,7 @@ export const CartScreen = () => {
           <Typography variant="h2">Total</Typography>
           <Typography variant="h2" className="text-brand-primary">${(total + 5).toFixed(2)}</Typography>
         </View>
-        <Button title="Proceed to Checkout" onPress={() => {}} className="py-4 text-lg" />
+        <Button title="Proceed to Checkout" onPress={() => navigation.navigate('Checkout')} className="py-4 text-lg" />
       </View>
     </SafeAreaView>
   );
