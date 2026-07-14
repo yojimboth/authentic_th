@@ -23,7 +23,7 @@ export const CartScreen = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-zinc-50">
+    <View className="flex-1 bg-zinc-50">
       <ScrollView className="px-4 pt-6 flex-1">
         <Typography variant="h1" className="font-poppins mb-6">Your Order</Typography>
         
