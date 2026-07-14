@@ -14,57 +14,68 @@ import { currentConfig } from './src/config/whiteLabelConfig';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+// Extracted to a stable, named component rather than an inline function
+// passed as `component={() => (...)}`. React Navigation treats the
+// `component` prop's identity as the screen's component type; an inline
+// arrow function is a brand-new function (and thus a brand-new component
+// type) on every render of the parent, which unmounts/remounts the entire
+// tab navigator and resets its navigation state (selected tab, tab-level
+// history) on every re-render of <App />.
+function MainTabsNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: currentConfig.theme.backgroundColor,
+          borderTopWidth: 1,
+          borderTopColor: currentConfig.theme.borderColor,
+          height: 60,
+          paddingBottom: 10
+        },
+        tabBarActiveTintColor: currentConfig.theme.activeTintColor,
+        tabBarInactiveTintColor: currentConfig.theme.inactiveTintColor,
+        tabBarIcon: ({ color, size }) => {
+          if (route.name === 'Menu') {
+            return <Utensils size={size} color={color} />;
+          }
+          if (route.name === 'Cart') {
+            return <ShoppingCart size={size} color={color} />;
+          }
+          if (route.name === 'Profile') {
+            return <User size={size} color={color} />;
+          }
+        },
+      })}
+    >
+      <Tab.Screen
+        name="Menu"
+        component={MenuScreen}
+        options={{ tabBarLabel: 'Menu' }}
+      />
+      <Tab.Screen
+        name="Cart"
+        component={CartScreen}
+        options={{ tabBarLabel: 'Cart' }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ tabBarLabel: 'Profile' }}
+      />
+    </Tab.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <SafeAreaProvider>
       <GlobalSafeWrapper>
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen 
-              name="MainTabs" 
-              component={() => (
-                <Tab.Navigator 
-                  screenOptions={({ route }) => ({ 
-                    headerShown: false,
-                    tabBarStyle: { 
-                      backgroundColor: currentConfig.theme.backgroundColor, 
-                      borderTopWidth: 1, 
-                      borderTopColor: currentConfig.theme.borderColor,
-                      height: 60,
-                      paddingBottom: 10
-                    },
-                    tabBarActiveTintColor: currentConfig.theme.activeTintColor,
-                    tabBarInactiveTintColor: currentConfig.theme.inactiveTintColor,
-                    tabBarIcon: ({ color, size }) => {
-                      if (route.name === 'Menu') {
-                        return <Utensils size={size} color={color} />;
-                      }
-                      if (route.name === 'Cart') {
-                        return <ShoppingCart size={size} color={color} />;
-                      }
-                      if (route.name === 'Profile') {
-                        return <User size={size} color={color} />;
-                      }
-                    },
-                  })}
-                >
-                  <Tab.Screen 
-                    name="Menu" 
-                    component={MenuScreen} 
-                    options={{ tabBarLabel: 'Menu' }} 
-                  />
-                  <Tab.Screen 
-                    name="Cart" 
-                    component={CartScreen} 
-                    options={{ tabBarLabel: 'Cart' }} 
-                  />
-                  <Tab.Screen 
-                    name="Profile" 
-                    component={ProfileScreen} 
-                    options={{ tabBarLabel: 'Profile' }} 
-                  />
-                </Tab.Navigator>
-              )} 
+            <Stack.Screen
+              name="MainTabs"
+              component={MainTabsNavigator}
               options={{ headerShown: false }}
             />
             <Stack.Screen name="Checkout">
