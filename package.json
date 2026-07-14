@@ -11,5 +11,14 @@
     "restaurant:start": "npm start --workspace=restaurant-app",
     "admin:start": "npm start --workspace=admin-portal",
     "backend:dev": "cd services/api-gateway && cargo run"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  },
+  "dependencies": {
+    "@react-native-community/masked-view": "^0.1.11",
+    "@react-navigation/stack": "^6.4.1",
+    "react-native-gesture-handler": "^3.0.2",
+    "react-native-safe-area-context": "^5.8.0"
   }
 }
