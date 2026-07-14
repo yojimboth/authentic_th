@@ -20,7 +20,7 @@ export interface WhiteLabelConfig {
 }
 
 export const RESTAURANT_CONFIGS: Record<string, WhiteLabelConfig> = {
-  restaurant_a: {
+  siam_authentic: {
     restaurantName: 'Siam Authentic',
     tenantId: 'tenant_siam_001',
     theme: {
@@ -32,7 +32,7 @@ export const RESTAURANT_CONFIGS: Record<string, WhiteLabelConfig> = {
       inactiveTintColor: '#71717a',
     },
   },
-  restaurant_b: {
+  thai_breeze: {
     restaurantName: 'Thai Breeze Express',
     tenantId: 'tenant_breeze_002',
     theme: {
@@ -46,6 +46,6 @@ export const RESTAURANT_CONFIGS: Record<string, WhiteLabelConfig> = {
   },
 };
 
-// Determine current restaurant from environment variable, defaulting to restaurant_a
-const currentVariant = process.env.APP_VARIANT || 'restaurant_a';
-export const currentConfig = RESTAURANT_CONFIGS[currentVariant] || RESTAURANT_CONFIGS.restaurant_a;
+// Determine current restaurant from environment variable, defaulting to siam_authentic
+const currentVariant = process.env.APP_VARIANT || 'siam_authentic';
+export const currentConfig = RESTAURANT_CONFIGS[currentVariant] || RESTAURANT_CONFIGS.siam_authentic;

@@ -1,22 +1,22 @@
 export default ({ config }) => {
   // Load the variant from environment variables
-  const APP_VARIANT = process.env.APP_VARIANT || 'restaurant_a';
+  const APP_VARIANT = process.env.APP_VARIANT || 'siam_authentic';
   
   // Define variants for Expo (Name, Bundle ID, etc.)
   const variants = {
-    restaurant_a: {
+    siam_authentic: {
       name: "Siam Authentic",
       bundleIdentifier: "com.authentic.siam",
       package: "com.authentic.siam",
     },
-    restaurant_b: {
+    thai_breeze: {
       name: "Thai Breeze Express",
       bundleIdentifier: "com.authentic.breeze",
       package: "com.authentic.breeze",
     },
   };
 
-  const variant = variants[APP_VARIANT] || variants.restaurant_a;
+  const variant = variants[APP_VARIANT] || variants.siam_authentic;
 
   return {
     expo: {
