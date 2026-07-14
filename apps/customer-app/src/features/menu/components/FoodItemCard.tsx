@@ -21,7 +21,7 @@ export const FoodItemCard = ({ item, onAddToCart }: FoodItemCardProps) => {
         <View>
           <Typography variant="h3" className="pr-2">{item.name}</Typography>
           <Text className="font-bold text-brand-primary text-base">${item.price.toFixed(2)}</Text>
-          <Typography variant="caption" className="mt-1 line-clamp-2 text-zinc-500">
+          <Typography variant="caption" className="mt-1 text-zinc-500" numberOfLines={2}>
             {item.description}
           </Typography>
         </View>
