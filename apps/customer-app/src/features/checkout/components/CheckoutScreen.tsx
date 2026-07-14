@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useCartStore } from '../../../store/useCartStore';
-import { useProfile, UserProfile } from '../../../profile/hooks/useProfile';
+import { useProfile, UserProfile } from '../../profile/hooks/useProfile';
 import apiClient from 'api-client';
 
 interface CheckoutScreenProps {
