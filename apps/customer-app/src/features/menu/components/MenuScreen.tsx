@@ -1,3 +1,4 @@
+import { currentConfig } from '../../../config/whiteLabelConfig';
 import React, { useRef } from 'react';
 import { View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -52,7 +53,7 @@ export const MenuScreen = () => {
       {/* Sticky Header */}
       <View className="bg-zinc-50 px-4 pt-6 pb-4 border-b border-zinc-200 shadow-sm z-10">
         <View className="mb-6">
-          <Typography variant="h1" className="font-poppins mb-1">Siam Authentic</Typography>
+           <Typography variant="h1" className="font-poppins mb-1">{currentConfig.restaurantName}</Typography>
           <Typography variant="body" className="text-zinc-500">Fresh, appetising, energetic.</Typography>
         </View>
 

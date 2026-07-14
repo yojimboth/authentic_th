@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import apiClient from '../../../services/apiClient';
+import apiClient from 'api-client';
+import { currentConfig } from '../../../config/whiteLabelConfig';
 import { MenuCategory, AsyncState } from '../types';
 
 export const useMenu = () => {
@@ -8,7 +9,11 @@ export const useMenu = () => {
   const fetchMenu = async () => {
     setState({ status: 'loading' });
     try {
-      const response = await apiClient.get<MenuCategory[]>('/menu');
+      const response = await apiClient.get<MenuCategory[]>('/menu', {
+        headers: {
+          'x-tenant-id': currentConfig.tenantId,
+        },
+      });
       setState({ status: 'success', data: response.data });
     } catch (error: any) {
       setState({ status: 'error', error: error.message || 'Failed to fetch menu' });
