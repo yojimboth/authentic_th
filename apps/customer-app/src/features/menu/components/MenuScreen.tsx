@@ -5,7 +5,6 @@ import { Typography } from '../../../components/common/Typography';
 import { FoodItemCard } from './FoodItemCard';
 import { useMenu } from '../hooks/useMenu';
 import { useCartStore } from '../../../store/useCartStore';
-import { ChevronUp } from 'lucide-react-native';
 
 export const MenuScreen = () => {
   const { state } = useMenu();
@@ -46,10 +45,6 @@ export const MenuScreen = () => {
     if (yOffset !== undefined && scrollRef.current) {
       scrollRef.current.scrollTo({ y: yOffset, animated: true });
     }
-  };
-
-  const scrollToTop = () => {
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
   };
 
   return (
@@ -113,13 +108,6 @@ export const MenuScreen = () => {
         <View className="h-20" />
       </ScrollView>
 
-      <TouchableOpacity 
-        onPress={scrollToTop}
-        className="absolute bottom-20 right-6 w-12 h-12 bg-brand-primary rounded-full items-center justify-center shadow-lg"
-        style={{ elevation: 5 }}
-      >
-        <ChevronUp color="white" size={24} />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };
