@@ -40,19 +40,19 @@ const MOCK_DATA = {
     {
       category: 'Desserts',
       items: [
-        { id: 'm1-d1', name: 'Mango Sticky Rice', description: 'Fresh mango with sweet coconut sticky rice', price: 15.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Mango+Sticky+Rice' },
-        { id: 'm1-d2', name: 'Thai Fried Banana', description: 'Crispy bananas with honey and sesame seeds', price: 12.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Thai+Fried+Banana' },
-        { id: 'm1-d3', name: 'Coconut Ice Cream', description: 'Homemade coconut ice cream with peanuts', price: 11.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Coconut+Ice+Cream' },
-        { id: 'm1-d4', name: 'Tub Tim Krob', description: 'Water chestnut rubies in coconut milk', price: 13.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Tub+Tim+Krob' },
+        { id: 'm1-d1', name: 'Mango Sticky Rice', description: 'Fresh mango with sweet coconut sticky rice', price: 15.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Mango+Sticky+Rice' },
+        { id: 'm1-d2', name: 'Thai Fried Banana', description: 'Crispy bananas with honey and sesame seeds', price: 12.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Thai+Fried+Banana' },
+        { id: 'm1-d3', name: 'Coconut Ice Cream', description: 'Homemade coconut ice cream with peanuts', price: 11.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Coconut+Ice+Cream' },
+        { id: 'm1-d4', name: 'Tub Tim Krob', description: 'Water chestnut rubies in coconut milk', price: 13.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Tub+Tim+Krob' },
       ]
     },
     {
       category: 'Beverages',
       items: [
-        { id: 'm1-be1', name: 'Thai Iced Tea', description: 'Sweet creamy tea with condensed milk', price: 7.50, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Thai+Iced+Tea' },
-        { id: 'm1-be2', name: 'Thai Iced Coffee', description: 'Strong brew with condensed milk', price: 7.50, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Thai+Iced+Coffee' },
-        { id: 'm1-be3', name: 'Fresh Coconut Water', description: 'Chilled coconut water in the shell', price: 9.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Fresh+Coconut+Water' },
-        { id: 'm1-be4', name: 'Butterfly Pea Lemonade', description: 'Vibrant blue herbal tea with a squeeze of lime', price: 8.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Butterfly+Pea+Lemonade' },
+        { id: 'm1-be1', name: 'Thai Iced Tea', description: 'Sweet creamy tea with condensed milk', price: 7.50, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Thai+Iced+Tea' },
+        { id: 'm1-be2', name: 'Thai Iced Coffee', description: 'Strong brew with condensed milk', price: 7.50, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Thai+Iced+Coffee' },
+        { id: 'm1-be3', name: 'Fresh Coconut Water', description: 'Chilled coconut water in the shell', price: 9.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Fresh+Coconut+Water' },
+        { id: 'm1-be4', name: 'Butterfly Pea Lemonade', description: 'Vibrant blue herbal tea with a squeeze of lime', price: 8.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Butterfly+Pea+Lemonade' },
       ]
     }
   ],
