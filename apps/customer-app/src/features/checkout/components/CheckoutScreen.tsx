@@ -91,15 +91,15 @@ export const CheckoutScreen = ({ onPaymentSuccess }: CheckoutScreenProps) => {
 
   if (profileState.status === 'loading') {
     return (
-      <SafeAreaView className="flex-1 bg-zinc-50 justify-center items-center">
+      <View className="flex-1 bg-zinc-50 justify-center items-center">
         <ActivityIndicator size="large" color="#4F46E5" />
         <Typography variant="body" className="mt-4 text-zinc-500">Loading profile...</Typography>
-      </SafeAreaView>
+      </View>
     );
   }
-
+  
   return (
-    <SafeAreaView className="flex-1 bg-zinc-50">
+    <View className="flex-1 bg-zinc-50">
       <ScrollView className="px-6 pt-6 flex-1">
         <Typography variant="h1" className="font-poppins mb-6">Checkout</Typography>
         
