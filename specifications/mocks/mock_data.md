@@ -21,7 +21,7 @@ Consistent user identities for authentication mocks and order history simulation
 
 ## 🍲 2. Restaurant 1: Siam Authentic Thai (Main)
 **Location:** 15-17 Darlinghurst Rd, Sydney NSW 2010  
-**Category Layout:** 9 Categories
+**Category Layout:** 11 Categories
 
 ### Category: Promotion
 | Item ID (UUID) | Name | Description | Price | Spice | Avail |
@@ -111,6 +111,22 @@ Consistent user identities for authentication mocks and order history simulation
 | `m1-f4` | Garlic Fish Fillet | Pan-fried fish with garlic and peppercorns | $25.00 | 0 | Yes |
 | `m1-f5` | Spicy Basil Fish | Fish fillet stir fried with holy basil | $25.00 | 3 | Yes |
 | `m1-f6` | Three Flavor Fish | Fried fish with sweet, sour, and spicy sauce | $34.00 | 2 | Yes |
+
+### Category: Desserts
+| Item ID (UUID) | Name | Description | Price | Spice | Avail |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `m1-d1` | Mango Sticky Rice | Fresh mango with sweet coconut sticky rice | $15.00 | 0 | Yes |
+| `m1-d2` | Thai Fried Banana | Crispy bananas with honey and sesame seeds | $12.00 | 0 | Yes |
+| `m1-d3` | Coconut Ice Cream | Homemade coconut ice cream with peanuts | $11.00 | 0 | Yes |
+| `m1-d4` | Tub Tim Krob | Water chestnut rubies in coconut milk | $13.00 | 0 | Yes |
+
+### Category: Beverages
+| Item ID (UUID) | Name | Description | Price | Spice | Avail |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `m1-be1` | Thai Iced Tea | Sweet creamy tea with condensed milk | $7.50 | 0 | Yes |
+| `m1-be2` | Thai Iced Coffee | Strong brew with condensed milk | $7.50 | 0 | Yes |
+| `m1-be3` | Fresh Coconut Water | Chilled coconut water in the shell | $9.00 | 0 | Yes |
+| `m1-be4` | Butterfly Pea Lemonade | Vibrant blue herbal tea with a squeeze of lime | $8.00 | 0 | Yes |
 
 ---
 

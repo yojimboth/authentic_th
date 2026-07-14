@@ -19,22 +19,40 @@ const MOCK_DATA = {
     {
       category: 'Promotion',
       items: [
-        { id: 'm1-p1', name: 'Lunch Special Bundle', description: 'Green Curry + Jasmine Rice + Thai Iced Tea', price: 22.50, spice: 2, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Lunch+Special+Bundle' },
-        { id: 'm1-p2', name: 'Family Feast Pack', description: '3 Mains, 2 Entrees, Large Mixed Rice', price: 85.00, spice: 2, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Family+Feast+Pack' },
+        { id: 'm1-p1', name: 'Lunch Special Bundle', description: 'Green Curry + Jasmine Rice + Thai Iced Tea', price: 22.50, spice: 2, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Lunch+Special+Bundle' },
+        { id: 'm1-p2', name: 'Family Feast Pack', description: '3 Mains, 2 Entrees, Large Mixed Rice', price: 85.00, spice: 2, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Family+Feast+Pack' },
       ]
     },
     {
       category: 'Entree',
       items: [
-        { id: 'm1-e1', name: 'Chicken Satay', description: 'Grilled skewers with peanut sauce', price: 12.00, spice: 1, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Chicken+Satay' },
-        { id: 'm1-e2', name: 'Pork Spring Rolls', description: 'Hand-rolled vegetables and minced pork', price: 10.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Pork+Spring+Rolls' },
+        { id: 'm1-e1', name: 'Chicken Satay', description: 'Grilled skewers with peanut sauce', price: 12.00, spice: 1, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Chicken+Satay' },
+        { id: 'm1-e2', name: 'Pork Spring Rolls', description: 'Hand-rolled vegetables and minced pork', price: 10.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Pork+Spring+Rolls' },
       ]
     },
     {
       category: 'Curries',
       items: [
-        { id: 'm1-c1', name: 'Green Curry', description: 'Spicy coconut curry with bamboo shoots', price: 21.00, spice: 3, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Green+Curry' },
-        { id: 'm1-c4', name: 'Massaman Curry', description: 'Mild potato and peanut curry (slow cooked)', price: 23.00, spice: 1, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Massaman+Curry' },
+        { id: 'm1-c1', name: 'Green Curry', description: 'Spicy coconut curry with bamboo shoots', price: 21.00, spice: 3, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Green+Curry' },
+        { id: 'm1-c4', name: 'Massaman Curry', description: 'Mild potato and peanut curry (slow cooked)', price: 23.00, spice: 1, isAvailable: true, imageUrl: 'https://placehold.co/400x400.png?text=Massaman+Curry' },
+      ]
+    },
+    {
+      category: 'Desserts',
+      items: [
+        { id: 'm1-d1', name: 'Mango Sticky Rice', description: 'Fresh mango with sweet coconut sticky rice', price: 15.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Mango+Sticky+Rice' },
+        { id: 'm1-d2', name: 'Thai Fried Banana', description: 'Crispy bananas with honey and sesame seeds', price: 12.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Thai+Fried+Banana' },
+        { id: 'm1-d3', name: 'Coconut Ice Cream', description: 'Homemade coconut ice cream with peanuts', price: 11.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Coconut+Ice+Cream' },
+        { id: 'm1-d4', name: 'Tub Tim Krob', description: 'Water chestnut rubies in coconut milk', price: 13.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Tub+Tim+Krob' },
+      ]
+    },
+    {
+      category: 'Beverages',
+      items: [
+        { id: 'm1-be1', name: 'Thai Iced Tea', description: 'Sweet creamy tea with condensed milk', price: 7.50, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Thai+Iced+Tea' },
+        { id: 'm1-be2', name: 'Thai Iced Coffee', description: 'Strong brew with condensed milk', price: 7.50, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Thai+Iced+Coffee' },
+        { id: 'm1-be3', name: 'Fresh Coconut Water', description: 'Chilled coconut water in the shell', price: 9.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Fresh+Coconut+Water' },
+        { id: 'm1-be4', name: 'Butterfly Pea Lemonade', description: 'Vibrant blue herbal tea with a squeeze of lime', price: 8.00, spice: 0, isAvailable: true, imageUrl: 'https://placehold.co/400x300?text=Butterfly+Pea+Lemonade' },
       ]
     }
   ],
