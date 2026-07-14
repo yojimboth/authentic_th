@@ -206,6 +206,6 @@ export const CheckoutScreen = ({ onPaymentSuccess }: CheckoutScreenProps) => {
           disabled={isProcessing || subtotal === 0}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
