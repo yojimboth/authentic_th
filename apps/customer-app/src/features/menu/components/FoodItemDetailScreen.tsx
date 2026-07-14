@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, ScrollView, SafeAreaView } from 'react-native';
+import { View, Image, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { FoodItem } from '../types';
@@ -19,7 +19,7 @@ export const FoodItemDetailScreen = ({ item, onAddToCart, onBack }: FoodItemDeta
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView>
         {/* Hero Image */}
         <View className="relative">
@@ -85,6 +85,6 @@ export const FoodItemDetailScreen = ({ item, onAddToCart, onBack }: FoodItemDeta
           className="py-4 text-lg"
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };

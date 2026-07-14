@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Alert, Text, ActivityIndicator, Switch } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useCartStore } from '../../../store/useCartStore';

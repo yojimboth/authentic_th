@@ -1,25 +1,24 @@
 import React from 'react';
-import { View, ScrollView, SafeAreaView } from 'react-native';
+import { View, ScrollView, Image } from 'react-native';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
-import { useCartStore } from '../../../store/useCartStore';
-import apiClient from '../../../services/apiClient';
+import { useProfile } from '../hooks/useProfile';
 
 export const ProfileScreen = () => {
   const { state } = useProfile(); // Hook will be implemented below
 
   if (state.status === 'loading') {
     return (
-      <SafeAreaView className="flex-1 bg-zinc-50 items-center justify-center">
+      <View className="flex-1 bg-zinc-50 items-center justify-center">
         <Typography variant="body">Loading Profile...</Typography>
-      </SafeAreaView>
+      </View>
     );
   }
 
   const user = state.data;
 
   return (
-    <SafeAreaView className="flex-1 bg-zinc-50">
+    <View className="flex-1 bg-zinc-50">
       <ScrollView className="px-6 pt-6">
         <View className="flex-row items-center mb-8">
           <Image 
@@ -56,6 +55,6 @@ export const ProfileScreen = () => {
 
         <Button title="Logout" variant="danger" onPress={() => {}} className="mt-12 py-4" />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };

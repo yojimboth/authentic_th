@@ -1,7 +1,6 @@
 import { currentConfig } from '../../../config/whiteLabelConfig';
 import React, { useRef } from 'react';
 import { View, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Typography } from '../../../components/common/Typography';
 import { FoodItemCard } from './FoodItemCard';
 import { useMenu } from '../hooks/useMenu';
@@ -17,18 +16,18 @@ export const MenuScreen = () => {
 
   if (state.status === 'loading') {
     return (
-      <SafeAreaView className="flex-1 bg-zinc-50 items-center justify-center">
+      <View className="flex-1 bg-zinc-50 items-center justify-center">
         <Typography variant="body">Loading Delicious Thai Food...</Typography>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (state.status === 'error') {
     return (
-      <SafeAreaView className="flex-1 bg-zinc-50 items-center justify-center p-4">
+      <View className="flex-1 bg-zinc-50 items-center justify-center p-4">
         <Typography variant="h3" className="text-rose-500">Oops!</Typography>
         <Typography variant="body" className="text-center">{state.error}</Typography>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -49,7 +48,7 @@ export const MenuScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-zinc-50">
+    <View className="flex-1 bg-zinc-50">
       {/* Sticky Header */}
       <View className="bg-zinc-50 px-4 pt-6 pb-4 border-b border-zinc-200 shadow-sm z-10">
         <View className="mb-6">
@@ -109,6 +108,6 @@ export const MenuScreen = () => {
         <View className="h-20" />
       </ScrollView>
 
-    </SafeAreaView>
+    </View>
   );
 };

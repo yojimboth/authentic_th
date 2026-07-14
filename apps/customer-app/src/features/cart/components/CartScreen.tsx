@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useCartStore } from '../../../store/useCartStore';
@@ -13,13 +12,13 @@ export const CartScreen = () => {
 
   if (items.length === 0) {
     return (
-      <SafeAreaView className="flex-1 bg-zinc-50 items-center justify-center p-6">
+      <View className="flex-1 bg-zinc-50 items-center justify-center p-6">
         <Typography variant="h2" className="text-center mb-2">Your Cart is Empty</Typography>
         <Typography variant="body" className="text-center text-zinc-500 mb-6">
           Looks like you haven't added any Thai delicacies yet.
         </Typography>
         <Button title="Browse Menu" onPress={() => {}} className="w-full" />
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -63,6 +62,6 @@ export const CartScreen = () => {
         </View>
         <Button title="Proceed to Checkout" onPress={() => navigation.navigate('Checkout')} className="py-4 text-lg" />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
