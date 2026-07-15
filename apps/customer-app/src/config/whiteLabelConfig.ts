@@ -1,5 +1,8 @@
+import Constants from 'expo-constants';
+
 /**
  * White-Label Configuration System
+
  * 
  * This file centralizes all restaurant-specific branding and identifiers.
  * In a production build, these values can be injected via environment variables
@@ -46,6 +49,6 @@ export const RESTAURANT_CONFIGS: Record<string, WhiteLabelConfig> = {
   },
 };
 
-// Determine current restaurant from environment variable, defaulting to siam_authentic
-const currentVariant = process.env.APP_VARIANT || 'siam_authentic';
+// Determine current restaurant from Expo config extra, defaulting to siam_authentic
+const currentVariant = Constants.expoConfig?.extra?.appVariant || 'siam_authentic';
 export const currentConfig = RESTAURANT_CONFIGS[currentVariant] || RESTAURANT_CONFIGS.siam_authentic;

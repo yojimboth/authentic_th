@@ -61,12 +61,14 @@ export const CheckoutScreen = ({ onPaymentSuccess }: CheckoutScreenProps) => {
       // In a real app, we'd use @stripe/stripe-react-native here
       await new Promise(resolve => setTimeout(resolve, 1500)); 
 
-      // Step C: Finalize order on backend
-      await apiClient.post('/orders/confirm', {
-        amount: total,
-        fulfillmentMethod: fulfillment,
-        usedLoyaltyPoints: useLoyaltyPoints,
-      });
+       // Step C: Finalize order on backend
+       await apiClient.post('/orders/confirm', {
+         fulfillmentMethod: fulfillment,
+         usedLoyaltyPoints: useLoyaltyPoints,
+         // We no longer send the 'amount' from the client.
+         // The backend must calculate the total based on the cart items 
+         // and the relevant tenant's pricing to prevent price manipulation.
+       });
 
       // Step D: Clear Cart
       clearCart();
