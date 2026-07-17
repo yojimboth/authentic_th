@@ -59,4 +59,17 @@ export const RESTAURANT_CONFIGS: Record<string, WhiteLabelConfig> = {
 
 // Determine current restaurant from Expo config extra, defaulting to siam_authentic
 const currentVariant = Constants.expoConfig?.extra?.appVariant || 'siam_authentic';
-export const currentConfig = RESTAURANT_CONFIGS[currentVariant] || RESTAURANT_CONFIGS.siam_authentic;
+const resolvedConfig = RESTAURANT_CONFIGS[currentVariant] || null;
+
+// Validate tenant configuration exists to prevent running with missing tenant ID
+if (!resolvedConfig) {
+  console.error(
+    'FATAL: No valid tenant configuration found for variant:',
+    currentVariant,
+    '. Available variants:',
+    Object.keys(RESTAURANT_CONFIGS).join(', '),
+  );
+  throw new Error('Missing tenant configuration');
+}
+
+export const currentConfig = resolvedConfig;

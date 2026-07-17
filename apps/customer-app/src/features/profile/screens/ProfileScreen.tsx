@@ -3,6 +3,7 @@ import { View, ScrollView, Image } from 'react-native';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useProfile } from '../hooks/useProfile';
+import { logout } from '../../../utils/mockAuth';
 
 export const ProfileScreen = ({ navigation }: any) => {
   const { state } = useProfile(); // Hook will be implemented below
@@ -15,7 +16,8 @@ export const ProfileScreen = ({ navigation }: any) => {
     );
   }
 
-  const user = state.data;
+  // Security: Properly narrow AsyncState type before accessing data
+  const user = state.status === 'success' ? state.data : null;
 
   return (
     <View className="flex-1 bg-zinc-50">
@@ -63,7 +65,18 @@ export const ProfileScreen = ({ navigation }: any) => {
           </View>
         </View>
 
-        <Button title="Logout" variant="danger" onPress={() => {}} className="mt-12 py-4" />
+        <Button 
+          title="Logout" 
+          variant="danger" 
+          onPress={async () => {
+            await logout();
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Splash' }],
+            });
+          }} 
+          className="mt-12 py-4" 
+        />
       </ScrollView>
     </View>
   );

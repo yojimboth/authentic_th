@@ -36,7 +36,13 @@ export const OrderStatusDetailScreen = () => {
     );
   }
 
-  // Security: IDOR Protection - Verify order belongs to current user
+  // SECURITY: In production, server-side authorization MUST verify order ownership.
+  // Client-side checks alone are insufficient against a malicious backend or API manipulation.
+  // The backend must implement:
+  //   1. Authentication (verify user token)
+  //   2. Authorization (verify order belongs to authenticated user)
+  //   3. Input validation (sanitize orderId parameter)
+  // See: CWE-639 (Authorization Bypass Through User-Controlled Key)
   const currentUserId = getCurrentUserId();
   if (order.userId !== currentUserId) {
     return (

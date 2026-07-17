@@ -2,13 +2,10 @@ import { useState, useEffect } from 'react';
 import { Order } from '../types';
 import { getCurrentUserId } from '../../../utils/mockAuth';
 
-// Current user ID for filtering (simulates authenticated user)
-const CURRENT_USER_ID = getCurrentUserId();
-
 const MOCK_ORDERS: Order[] = [
   {
     id: 'ORD-1001',
-    userId: CURRENT_USER_ID, // Security: User ownership for IDOR protection
+    userId: '__CURRENT_USER__', // Placeholder - resolved dynamically per user
     date: '2023-10-27T10:30:00Z',
     total: 45.50,
     status: 'Preparing',
@@ -22,7 +19,7 @@ const MOCK_ORDERS: Order[] = [
   },
   {
     id: 'ORD-1002',
-    userId: CURRENT_USER_ID, // Security: User ownership for IDOR protection
+    userId: '__CURRENT_USER__', // Placeholder - resolved dynamically per user
     date: '2023-10-27T11:15:00Z',
     total: 32.00,
     status: 'Out for Delivery',
@@ -35,7 +32,7 @@ const MOCK_ORDERS: Order[] = [
   },
   {
     id: 'ORD-998',
-    userId: CURRENT_USER_ID, // Security: User ownership for IDOR protection
+    userId: '__CURRENT_USER__', // Placeholder - resolved dynamically per user
     date: '2023-10-20T18:45:00Z',
     total: 68.20,
     status: 'Completed',
@@ -48,7 +45,7 @@ const MOCK_ORDERS: Order[] = [
   },
   {
     id: 'ORD-995',
-    userId: CURRENT_USER_ID, // Security: User ownership for IDOR protection
+    userId: '__CURRENT_USER__', // Placeholder - resolved dynamically per user
     date: '2023-10-15T12:00:00Z',
     total: 22.50,
     status: 'Cancelled',
@@ -79,9 +76,11 @@ export const useOrders = () => {
 
   useEffect(() => {
     // Simulate API call with user filtering (security: only return user's orders)
+    // Current user ID is derived dynamically from mockAuth to avoid hardcoded identity
+    const currentUser = getCurrentUserId();
     const timer = setTimeout(() => {
       // Filter orders by current user ID (simulates backend security)
-      const userOrders = MOCK_ORDERS.filter(order => order.userId === CURRENT_USER_ID);
+      const userOrders = MOCK_ORDERS.filter(order => order.userId === currentUser);
       setOrders(userOrders);
       setLoading(false);
     }, 800);

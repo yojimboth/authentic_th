@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { FoodItem } from '../menu/types';
 
 interface CartItem extends FoodItem {
@@ -20,6 +20,38 @@ interface CartState {
   clearCart: () => void;
   getTotal: () => number;
 }
+
+const CART_STORAGE_KEY = '@auth_cart';
+
+const secureStorePersist = createJSONStorage(() => ({
+  getItem: async (key: string) => {
+    if (key !== CART_STORAGE_KEY) return null;
+    try {
+      const value = await SecureStore.getItemAsync(CART_STORAGE_KEY);
+      return value ?? null;
+    } catch {
+      return null;
+    }
+  },
+  setItem: async (key: string, value: string) => {
+    if (key !== CART_STORAGE_KEY) return;
+    try {
+      await SecureStore.setItemAsync(CART_STORAGE_KEY, value, {
+        keychainAccessible: SecureStore.ALWAYS_THIS_DEVICE_ONLY,
+      });
+    } catch {
+      // Silently fail - cart data is non-critical
+    }
+  },
+  removeItem: async (key: string) => {
+    if (key !== CART_STORAGE_KEY) return;
+    try {
+      await SecureStore.deleteItemAsync(CART_STORAGE_KEY);
+    } catch {
+      // Silently fail
+    }
+  },
+}));
 
 export const useCartStore = create<CartState>()(
   persist(
@@ -57,8 +89,8 @@ export const useCartStore = create<CartState>()(
       },
     }),
     {
-      name: 'cart-storage',
-      storage: createJSONStorage(() => AsyncStorage),
+      name: CART_STORAGE_KEY,
+      storage: secureStorePersist,
     }
   )
 );
