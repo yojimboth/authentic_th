@@ -70,7 +70,7 @@ To ensure consistent API responses, the system utilizes a hierarchical error mod
 The system employs a **Shared Schema, Discriminator Column** approach to multi-tenancy. Every table containing tenant-specific data MUST include a `tenant_id` column.
 
 #### Core Entities
-- **`tenants`**: `id (UUID, PK)`, `name`, `domain`, `subscription_plan`, `created_at`.
+- **`tenants`**: `id (UUID, PK)`, `name`, `domain`, `subscription_plan`, `logo_url (TEXT, nullable)`, `created_at`.
 - **`users`**: `id (UUID, PK)`, `tenant_id (FK)`, `email`, `password_hash`, `role_id (FK)`.
 - **`orders`**: `id (UUID, PK)`, `tenant_id (FK)`, `customer_id`, `total_amount`, `status`, `created_at`.
 - **`menus`**: `id (UUID, PK)`, `tenant_id (FK)`, `category`, `item_name`, `price`, `is_available`.
@@ -126,6 +126,7 @@ Base Path: `/api/v1`
 
 ### 3.4 Shared DTOs (Data Transfer Objects)
 Common response shapes ensure frontend consistency:
+- **TenantInfo DTO**: `{ "name": "String", "domain": "String", "logo_url": "String?" }`
 - **Success Response**: `{ "status": "success", "data": { ... } }`
 - **Error Response**: `{ "status": "error", "error": { "code": "VAL_001", "message": "Invalid email format" } }`
 - **Paginated Response**: `{ "data": [...], "meta": { "total": 100, "page": 1, "per_page": 20 } }`

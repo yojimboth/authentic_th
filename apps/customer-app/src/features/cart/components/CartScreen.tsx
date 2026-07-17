@@ -4,11 +4,25 @@ import { useNavigation } from '@react-navigation/native';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useCartStore } from '../../../store/useCartStore';
+import { styled } from 'nativewind';
+
+const StyledView = styled(View);
 
 export const CartScreen = () => {
   const navigation = useNavigation<any>();
-  const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore();
+  const { 
+    items, 
+    updateQuantity, 
+    removeItem, 
+    getTotal, 
+    fulfillmentMethod, 
+    setFulfillmentMethod 
+  } = useCartStore();
+  
   const total = getTotal();
+  const DELIVERY_FEE = 5.00;
+  const currentDeliveryFee = fulfillmentMethod === 'delivery' ? DELIVERY_FEE : 0;
+  const finalTotal = total + currentDeliveryFee;
 
   if (items.length === 0) {
     return (
@@ -17,7 +31,7 @@ export const CartScreen = () => {
         <Typography variant="body" className="text-center text-zinc-500 mb-6">
           Looks like you haven't added any Thai delicacies yet.
         </Typography>
-        <Button title="Browse Menu" onPress={() => {}} className="w-full" />
+          <Button title="Browse Menu" onPress={() => navigation.navigate('MainTabs', { screen: 'Menu' })} className="w-full" />
       </View>
     );
   }
@@ -26,6 +40,29 @@ export const CartScreen = () => {
     <View className="flex-1 bg-zinc-50">
       <ScrollView className="px-4 pt-6 flex-1">
         <Typography variant="h1" className="font-poppins mb-6">Your Order</Typography>
+
+        {/* Fulfillment Selection */}
+        <View className="p-4 bg-white border border-zinc-200 rounded-2xl mb-6">
+          <Typography variant="h3" className="mb-4">Delivery or Pickup?</Typography>
+          <View className="flex-row bg-zinc-100 p-1 rounded-xl w-full">
+            <TouchableOpacity 
+              onPress={() => setFulfillmentMethod('delivery')}
+              className={`flex-1 py-3 rounded-lg items-center justify-center ${fulfillmentMethod === 'delivery' ? 'bg-brand-primary' : 'bg-transparent'}`}
+            >
+              <Text className={`font-semibold ${fulfillmentMethod === 'delivery' ? 'text-white' : 'text-zinc-600'}`}>
+                Delivery
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => setFulfillmentMethod('pickup')}
+              className={`flex-1 py-3 rounded-lg items-center justify-center ${fulfillmentMethod === 'pickup' ? 'bg-brand-primary' : 'bg-transparent'}`}
+            >
+              <Text className={`font-semibold ${fulfillmentMethod === 'pickup' ? 'text-white' : 'text-zinc-600'}`}>
+                Pickup
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         
         {items.map((item) => (
           <View key={item.id} className="p-4 bg-white border border-zinc-200 rounded-xl mb-4 flex-row justify-between items-center">
@@ -53,12 +90,12 @@ export const CartScreen = () => {
           <Typography variant="body">${total.toFixed(2)}</Typography>
         </View>
         <View className="flex-row justify-between mb-4">
-          <Typography variant="body">Delivery Fee</Typography>
-          <Typography variant="body">$5.00</Typography>
+          <Typography variant="body">{fulfillmentMethod === 'delivery' ? 'Delivery Fee' : 'Pickup Fee'}</Typography>
+          <Typography variant="body">${currentDeliveryFee.toFixed(2)}</Typography>
         </View>
         <View className="flex-row justify-between mb-6">
           <Typography variant="h2">Total</Typography>
-          <Typography variant="h2" className="text-brand-primary">${(total + 5).toFixed(2)}</Typography>
+          <Typography variant="h2" className="text-brand-primary">${finalTotal.toFixed(2)}</Typography>
         </View>
         <Button title="Proceed to Checkout" onPress={() => navigation.navigate('Checkout')} className="py-4 text-lg" />
       </View>

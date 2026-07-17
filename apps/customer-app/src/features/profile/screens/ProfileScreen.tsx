@@ -4,7 +4,7 @@ import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useProfile } from '../hooks/useProfile';
 
-export const ProfileScreen = () => {
+export const ProfileScreen = ({ navigation }: any) => {
   const { state } = useProfile(); // Hook will be implemented below
 
   if (state.status === 'loading') {
@@ -31,25 +31,35 @@ export const ProfileScreen = () => {
           </View>
         </View>
 
-        <View className="p-6 bg-brand-primary rounded-3xl shadow-md mb-8">
-          <Typography variant="h3" className="text-white mb-1">Loyalty Points</Typography>
-          <Typography variant="h1" className="text-white font-poppins text-4xl">
+        <View className="p-6 bg-brand-primary/20 border border-brand-primary/30 rounded-3xl shadow-sm mb-8">
+          <Typography variant="h3" className="text-brand-primary mb-1">Loyalty Points</Typography>
+          <Typography variant="h1" className="text-brand-primary font-poppins text-4xl">
             {user?.loyaltyPoints} pts
           </Typography>
-          <Typography variant="caption" className="text-white/80 mt-2">
+          <Typography variant="caption" className="text-zinc-600 mt-2">
             Points are earned on every order. Redeem for discounts!
           </Typography>
         </View>
 
         <View className="space-y-4">
-          <Typography variant="h3" className="mb-4">Account Details</Typography>
-          <View className="p-4 bg-white border border-zinc-200 rounded-xl flex-row justify-between items-center mb-3">
-            <Typography variant="body" className="text-zinc-500">Phone</Typography>
-            <Typography variant="body">{user?.phone}</Typography>
+          <View className="flex-row items-center justify-between mb-6">
+            <Typography variant="h3">Account Details</Typography>
+            <Button 
+              title="Edit" 
+              variant="ghost" 
+              onPress={() => navigation.navigate('EditProfile')} 
+              className="py-1 px-3 h-8 text-xs"
+            />
           </View>
-          <View className="p-4 bg-white border border-zinc-200 rounded-xl flex-row justify-between items-center mb-3">
-            <Typography variant="body" className="text-zinc-500">Primary Address</Typography>
-            <Typography variant="body" className="text-right flex-1 ml-4">{user?.primaryAddress}</Typography>
+          <View className="py-3 border-b border-zinc-100">
+            <Typography variant="caption" className="text-zinc-500 mb-1">Phone</Typography>
+            <Typography variant="body" className="font-medium">{user?.phone}</Typography>
+          </View>
+          <View className="py-3 border-b border-zinc-100">
+            <Typography variant="caption" className="text-zinc-500 mb-1">Primary Address</Typography>
+            <Typography variant="body" className="font-medium">
+              {user?.primaryAddress}
+            </Typography>
           </View>
         </View>
 

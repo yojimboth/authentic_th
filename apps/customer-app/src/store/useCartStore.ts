@@ -8,8 +8,12 @@ interface CartItem extends FoodItem {
   selectedModifiers: string[];
 }
 
+type FulfillmentMethod = 'delivery' | 'pickup';
+
 interface CartState {
   items: CartItem[];
+  fulfillmentMethod: FulfillmentMethod;
+  setFulfillmentMethod: (method: FulfillmentMethod) => void;
   addItem: (item: FoodItem, modifiers: string[]) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, delta: number) => void;
@@ -21,6 +25,8 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      fulfillmentMethod: 'delivery',
+      setFulfillmentMethod: (method) => set({ fulfillmentMethod: method }),
       addItem: (item, modifiers) => {
         const currentItems = get().items;
         const existingItem = currentItems.find(i => i.id === item.id);

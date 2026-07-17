@@ -1,9 +1,10 @@
 import Constants from 'expo-constants';
+import { ImageSourcePropType } from 'react-native';
 
 /**
  * White-Label Configuration System
 
- * 
+ *
  * This file centralizes all restaurant-specific branding and identifiers.
  * In a production build, these values can be injected via environment variables
  * or separate config files per restaurant.
@@ -12,6 +13,9 @@ import Constants from 'expo-constants';
 export interface WhiteLabelConfig {
   restaurantName: string;
   tenantId: string;
+  slogan: string;
+  /** Static require() result for the restaurant's logo, used by StoreLogo. */
+  logoSource: ImageSourcePropType;
   theme: {
     primaryColor: string;
     secondaryColor: string;
@@ -26,6 +30,8 @@ export const RESTAURANT_CONFIGS: Record<string, WhiteLabelConfig> = {
   siam_authentic: {
     restaurantName: 'Siam Authentic',
     tenantId: 'tenant_siam_001',
+    slogan: 'Experience the true taste of Thailand',
+    logoSource: require('../assets/mocks/logos/siam_authentic.png'),
     theme: {
       primaryColor: '#FF6B00',
       secondaryColor: '#FFA500',
@@ -38,6 +44,8 @@ export const RESTAURANT_CONFIGS: Record<string, WhiteLabelConfig> = {
   thai_breeze: {
     restaurantName: 'Thai Breeze Express',
     tenantId: 'tenant_breeze_002',
+    slogan: 'Thai flavors, delivered fast',
+    logoSource: require('../assets/mocks/logos/thai_breeze_logo.png'),
     theme: {
       primaryColor: '#00A86B',
       secondaryColor: '#3CB371',

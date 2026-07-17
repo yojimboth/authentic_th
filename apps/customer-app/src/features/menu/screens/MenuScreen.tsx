@@ -2,7 +2,8 @@ import { currentConfig } from '../../../config/whiteLabelConfig';
 import React, { useRef } from 'react';
 import { View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Typography } from '../../../components/common/Typography';
-import { FoodItemCard } from './FoodItemCard';
+import { StoreLogo } from '../../../components/common/StoreLogo';
+import { FoodItemCard } from '../components/FoodItemCard';
 import { useMenu } from '../hooks/useMenu';
 import { useCartStore } from '../../../store/useCartStore';
 
@@ -51,9 +52,12 @@ export const MenuScreen = () => {
     <View className="flex-1 bg-zinc-50">
       {/* Sticky Header */}
       <View className="bg-zinc-50 px-4 pt-6 pb-4 border-b border-zinc-200 shadow-sm z-10">
-        <View className="mb-6">
-           <Typography variant="h1" className="font-poppins mb-1">{currentConfig.restaurantName}</Typography>
-          <Typography variant="body" className="text-zinc-500">Fresh, appetising, energetic.</Typography>
+        <View className="flex-row items-center mb-6">
+          <StoreLogo logoSource={currentConfig.logoSource} size={48} style={{ marginRight: 24 }} />
+          <View className="flex-1">
+            <Typography variant="h1" className="font-poppins mb-1">{currentConfig.restaurantName}</Typography>
+            <Typography variant="body" className="text-zinc-500">Fresh, appetising, energetic.</Typography>
+          </View>
         </View>
 
         {/* Category Quick-Nav */}

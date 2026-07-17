@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import { FoodItemCard } from './FoodItemCard';
+import { FoodItemCard } from '../components/FoodItemCard';
 import { FoodItem } from '../types';
 
 const item: FoodItem = {

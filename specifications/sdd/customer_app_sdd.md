@@ -53,10 +53,10 @@ The application employs a **Hook-Based Container Pattern**. Instead of wrapping 
 
 ### 2.2 Key Component Tree
 **Menu/Home Flow:**
-`MainTabs` $\rightarrow$ `MenuScreen` $\rightarrow$ `CategoryFilter` $\rightarrow$ `FoodItemList` $\rightarrow$ `FoodItemCard` $\rightarrow$ `AddToCartButton`
+`MainTabs` $\rightarrow$ `MenuScreen` (StoreLogo, CategoryFilter) $\rightarrow$ `FoodItemList` $\rightarrow$ `FoodItemCard` $\rightarrow$ `AddToCartButton`
 
 **Checkout Flow:**
-`CartScreen` $\rightarrow$ `OrderSummary` $\rightarrow$ `CheckoutButton` $\rightarrow$ `PaymentScreen (Stripe)` $\rightarrow$ `ConfirmationScreen`
+`CartScreen` $\rightarrow$ `OrderSummary` $\rightarrow$ `CheckoutButton` $\rightarrow$ `PaymentScreen (Stripe)` $\rightarrow$ `ConfirmationScreen` (StoreLogo)
 
 ### 2.3 UI Tokens (Styling)
 Styling is implemented via **NativeWind (Tailwind CSS for React Native)** to ensure consistency across screens.
@@ -73,6 +73,12 @@ TypeScript interfaces are mirrored from the Rust/Axum backend structs to ensure 
 
 ```typescript
 // src/features/menu/types/index.ts
+export interface TenantInfo {
+  name: string;
+  domain: string;
+  logoUrl: string | null;
+}
+
 export interface FoodItem {
   id: string;
   name: string;

@@ -6,20 +6,15 @@
 // and resets tab navigation state (selected tab, per-tab history) on every
 // re-render of the root component.
 //
-// App.tsx (and its screen dependencies, e.g. AsyncStorage-backed stores and
-// the lucide-react-native ESM package) pull in enough native/module surface
-// that a full `render(<App />)` here would require expanding this project's
-// Jest transform/mock configuration well beyond this fix's scope. A static
-// source check is the precedent already used in this codebase for the same
-// class of regression (see GlobalSafeWrapper.test.tsx's "does not import or
-// render its own SafeAreaProvider" check) and is sufficient to lock in the
-// invariant without that infra expansion.
-describe('App (MainTabs registration)', () => {
-  const source: string = require('fs').readFileSync(
-    __filename.replace('.test.tsx', '.tsx'),
+// Note: MainTabsNavigator is now defined in RootNavigator.tsx for proper
+// navigation structure with token-based authentication.
+describe('MainTabs registration (RootNavigator)', () => {
+  const rootNavigatorSource = require('fs').readFileSync(
+    require('path').join(__dirname, 'src/navigation/RootNavigator.tsx'),
     'utf8',
   );
-  const codeOnly = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+  
+  const codeOnly = rootNavigatorSource.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
 
   it('does not register MainTabs with an inline function as the `component` prop', () => {
     // Matches `component={() => ...}` / `component={function () {...}}`
