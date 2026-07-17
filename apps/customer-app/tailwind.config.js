@@ -1,11 +1,15 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./App.{js,jsx,ts,tsx}", "./src/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./App.{js,jsx,ts,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
         brand: {
-          primary: '#FF6B00', // brand-orange
-          secondary: '#F59E0B', // brand-amber
+          primary: '#FF6B00',
+          secondary: '#F59E0B',
         },
         zinc: {
           50: '#fafafa',
@@ -27,4 +31,5 @@ module.exports = {
     },
   },
   plugins: [],
+  prefix: '',
 };

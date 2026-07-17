@@ -6,9 +6,6 @@ import { RootStackParamList } from '../../../navigation/RootNavigator';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useCartStore } from '../../../store/useCartStore';
-import { styled } from 'nativewind';
-
-const StyledView = styled(View);
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
