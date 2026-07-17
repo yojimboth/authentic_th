@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "types": ["jest", "nativewind/types"],
+    "jsx": "react-native"
+  },
+  "extends": "expo/tsconfig.base"
+}
