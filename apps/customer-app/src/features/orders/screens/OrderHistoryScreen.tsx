@@ -1,8 +1,13 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../../navigation/RootNavigator';
 import { useOrders } from '../hooks/useOrders';
 import { Order, OrderStatus } from '../types';
 import { currentConfig } from '../../../config/whiteLabelConfig';
+
+type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 const StatusBadge = ({ status }: { status: OrderStatus }) => {
   const getStatusColor = () => {
@@ -56,7 +61,8 @@ const OrderCard = ({ order, onPress }: { order: Order; onPress: () => void }) =>
   </TouchableOpacity>
 );
 
-export const OrderHistoryScreen = ({ navigation }: any) => {
+export const OrderHistoryScreen = () => {
+  const navigation = useNavigation<NavigationProp>();
   const { orders, loading } = useOrders();
 
   if (loading) {

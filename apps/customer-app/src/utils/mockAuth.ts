@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Crypto from 'expo-crypto';
 import * as SecureStore from 'expo-secure-store';
+import { logLogin, logLogout, logAuthFailure, logAuthLockout } from './auditLogger';
 
 /**
  * Mock Authentication Utilities
@@ -17,11 +18,18 @@ import * as SecureStore from 'expo-secure-store';
  * - Configurable user identity instead of hardcoded values
  */
 
-const AUTH_TOKEN_KEY = '@auth_token';
-const AUTH_EXPIRY_KEY = '@auth_expiry';
+// SECURITY: Fixed-length, URL-safe keys compatible with expo-secure-store requirements
+const AUTH_TOKEN_KEY = 'auth_token';
+const AUTH_EXPIRY_KEY = 'auth_expiry';
 
 // Configurable user ID instead of hardcoded value
 let currentUserId: string | null = null;
+
+// SECURITY: Rate limiting to prevent brute force login attacks
+let failedAttempts = 0;
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
+let lockoutUntil: number | null = null;
 
 export const setCurrentUserId = (userId: string) => {
   currentUserId = userId;
@@ -108,6 +116,14 @@ export const isAuthenticated = async (): Promise<boolean> => {
  * with ALWAYS_THIS_DEVICE_ONLY accessibility to prevent cross-device access.
  */
 export const login = async (): Promise<string> => {
+  // SECURITY: Check if account is locked out due to failed attempts
+  if (lockoutUntil && Date.now() < lockoutUntil) {
+    const remaining = Math.ceil((lockoutUntil - Date.now()) / 1000);
+    // SECURITY: Log lockout event for compliance
+    logAuthLockout(getCurrentUserId());
+    throw new Error(`Account locked. Try again in ${remaining} seconds.`);
+  }
+
   try {
     const token = generateMockToken();
     const expiry = Date.now() + TOKEN_EXPIRY_MS;
@@ -119,9 +135,25 @@ export const login = async (): Promise<string> => {
       keychainAccessible: SecureStore.ALWAYS_THIS_DEVICE_ONLY,
     });
     
+    // SECURITY: Reset failed attempts on successful login
+    failedAttempts = 0;
+    lockoutUntil = null;
+    
+    // SECURITY: Log successful authentication event
+    logLogin(getCurrentUserId());
+    
     return token;
   } catch (error) {
-    console.error('Login failed:', error);
+    // SECURITY: Track failed attempts for brute force protection
+    failedAttempts++;
+    // SECURITY: Log authentication failure for compliance
+    logAuthFailure('Authentication failed', getCurrentUserId());
+    if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
+      lockoutUntil = Date.now() + LOCKOUT_DURATION_MS;
+      // SECURITY: Log lockout event
+      logAuthLockout(getCurrentUserId());
+      throw new Error(`Too many failed attempts. Account locked for 15 minutes.`);
+    }
     throw new Error('Authentication failed');
   }
 };
@@ -134,6 +166,11 @@ export const logout = async (): Promise<void> => {
     await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
     await SecureStore.deleteItemAsync(AUTH_EXPIRY_KEY);
     currentUserId = null;
+    // SECURITY: Reset rate limiting counters on logout
+    failedAttempts = 0;
+    lockoutUntil = null;
+    // SECURITY: Log logout event
+    logLogout(getCurrentUserId());
   } catch (error) {
     console.error('Logout failed:', error);
   }

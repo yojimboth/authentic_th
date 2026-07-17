@@ -36,8 +36,11 @@ const validateAddress = (address: string): { valid: boolean; message?: string } 
   if (address.trim().length < 10) {
     return { valid: false, message: 'Address must be at least 10 characters' };
   }
-  // Basic sanitization: remove potentially dangerous characters
-  const sanitized = address.replace(/[<>{}]/g, '');
+  if (address.trim().length > 500) {
+    return { valid: false, message: 'Address must be less than 500 characters' };
+  }
+  // Comprehensive sanitization: remove dangerous characters and null bytes
+  const sanitized = address.replace(/[<>{}\x00-\x1f\x7f]/g, '');
   if (sanitized !== address) {
     return { valid: false, message: 'Address contains invalid characters' };
   }
@@ -94,7 +97,9 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
       Alert.alert('Success', 'Profile updated successfully');
       navigation.goBack();
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to update profile');
+      // Security: Don't expose internal error details to users
+      console.error('Profile update error:', error);
+      Alert.alert('Error', 'Failed to update profile. Please try again or contact support.');
     } finally {
       setIsSaving(false);
     }
@@ -130,6 +135,7 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
               }}
               placeholder="Enter phone number"
               keyboardType="phone-pad"
+              maxLength={20}
             />
             {phoneError ? (
               <Typography variant="caption" className="text-red-500 mt-1 ml-1">
@@ -154,6 +160,7 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
               placeholder="Enter your full address"
               multiline={true}
               textAlignVertical="top"
+              maxLength={500}
             />
             {addressError ? (
               <Typography variant="caption" className="text-red-500 mt-1 ml-1">

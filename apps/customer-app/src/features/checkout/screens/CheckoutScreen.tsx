@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Alert, Text, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../../navigation/RootNavigator';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
-import { useCartStore } from '../../../store/useCartStore';
+import { useCartStore, cleanupCartData } from '../../../store/useCartStore';
 import { useProfile, UserProfile } from '../../profile/hooks/useProfile';
 import apiClient from 'api-client';
 import { FoodItem } from '../../menu/types';
@@ -15,7 +17,8 @@ interface CheckoutScreenProps {
 type FulfillmentMethod = 'delivery' | 'pickup';
 
 export const CheckoutScreen = ({ onPaymentSuccess }: CheckoutScreenProps) => {
-  const navigation = useNavigation<any>();
+  type NavigationProp = StackNavigationProp<RootStackParamList>;
+  const navigation = useNavigation<NavigationProp>();
   // Store & Profile
   const { getTotal, clearCart } = useCartStore();
   const { state: profileState } = useProfile();
@@ -86,10 +89,17 @@ export const CheckoutScreen = ({ onPaymentSuccess }: CheckoutScreenProps) => {
       // The backend is the source of truth for pricing
       const backendTotalCents = Math.round(calculatedAmount * 100);
       const clientTotalCents = Math.round(total * 100);
-      
+
       // Allow small floating point differences (1 cent tolerance)
       if (Math.abs(backendTotalCents - clientTotalCents) > 1) {
+        console.error(`Price mismatch: backend=${calculatedAmount}, client=${total}`);
         throw new Error("Payment amount mismatch. Please try again.");
+      }
+
+      // Additional check: ensure amount is positive and reasonable
+      if (calculatedAmount <= 0 || calculatedAmount > 10000) {
+        console.error(`Suspicious amount: ${calculatedAmount}`);
+        throw new Error("Invalid payment amount. Please try again.");
       }
       
       // Step B: Simulate Stripe Confirmation
@@ -107,6 +117,9 @@ export const CheckoutScreen = ({ onPaymentSuccess }: CheckoutScreenProps) => {
       // Step D: Clear Cart
       clearCart();
 
+      // SECURITY: Clean up stale cart data per data retention policy
+      await cleanupCartData();
+
       // Step E: Final Success
       Alert.alert(
         "Order Placed!",
@@ -115,9 +128,11 @@ export const CheckoutScreen = ({ onPaymentSuccess }: CheckoutScreenProps) => {
       );
 
     } catch (error: any) {
+      // Security: Don't expose internal error details to users
+      console.error('Payment processing error:', error);
       Alert.alert(
         "Payment Failed", 
-        error.message || "Something went wrong while processing your payment. Please try again."
+        "Something went wrong while processing your payment. Please try again or contact support."
       );
     } finally {
       setIsProcessing(false);

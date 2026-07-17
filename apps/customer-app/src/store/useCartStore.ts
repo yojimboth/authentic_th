@@ -94,3 +94,17 @@ export const useCartStore = create<CartState>()(
     }
   )
 );
+
+// SECURITY: Cleanup function for stale cart data (data retention compliance)
+export const cleanupCartData = async () => {
+  try {
+    // SECURITY: Remove completed/cancelled orders older than 30 days
+    const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+    
+    // Cart store does not currently store order history, so this is a placeholder
+    // for future implementation when order history is persisted client-side
+    console.log('Cart cleanup: No stale data to remove', { thirtyDaysAgo });
+  } catch (error) {
+    console.error('Cart cleanup failed:', error);
+  }
+};

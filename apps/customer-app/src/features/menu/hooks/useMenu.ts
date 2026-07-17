@@ -16,7 +16,9 @@ export const useMenu = () => {
       });
       setState({ status: 'success', data: response.data });
     } catch (error: any) {
-      setState({ status: 'error', error: error.message || 'Failed to fetch menu' });
+      // Security: Don't expose internal error details to users
+      console.error('Menu fetch error:', error);
+      setState({ status: 'error', error: 'Failed to load menu. Please try again.' });
     }
   };
 

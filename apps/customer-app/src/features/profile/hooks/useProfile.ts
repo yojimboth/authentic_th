@@ -20,7 +20,9 @@ export const useProfile = () => {
       const response = await apiClient.get<UserProfile>('/user/profile');
       setState({ status: 'success', data: response.data });
     } catch (error: any) {
-      setState({ status: 'error', error: error.message || 'Failed to fetch profile' });
+      // Security: Don't expose internal error details to users
+      console.error('Profile fetch error:', error);
+      setState({ status: 'error', error: 'Failed to load profile. Please try again.' });
     }
   };
 

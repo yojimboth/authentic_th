@@ -1,11 +1,17 @@
 import React from 'react';
 import { View, ScrollView, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../../navigation/RootNavigator';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useProfile } from '../hooks/useProfile';
 import { logout } from '../../../utils/mockAuth';
 
-export const ProfileScreen = ({ navigation }: any) => {
+type NavigationProp = StackNavigationProp<RootStackParamList>;
+
+export const ProfileScreen = () => {
+  const navigation = useNavigation<NavigationProp>();
   const { state } = useProfile(); // Hook will be implemented below
 
   if (state.status === 'loading') {

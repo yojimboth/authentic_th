@@ -9,6 +9,10 @@ import qs from 'qs';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'https://api.authentic-th.com.au/api/v1';
 
+// SECURITY: SSL pinning should be implemented in production builds.
+// This prevents man-in-the-middle attacks on public networks.
+// Implementation requires native code changes via expo-config-plugin.
+
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
