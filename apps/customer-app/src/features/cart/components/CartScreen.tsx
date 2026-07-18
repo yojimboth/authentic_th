@@ -1,16 +1,20 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../navigation/RootNavigator';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useCartStore } from '../../../store/useCartStore';
+import { FoodItem } from '../../menu/types';
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
+// CartItem type with required properties
+interface CartItem extends FoodItem {
+  quantity: number;
+  selectedModifiers: string[];
+}
 
 export const CartScreen = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<any>();
   const { 
     items, 
     updateQuantity, 
@@ -32,7 +36,7 @@ export const CartScreen = () => {
         <Typography variant="body" className="text-center text-zinc-500 mb-6">
           Looks like you haven't added any Thai delicacies yet.
         </Typography>
-          <Button title="Browse Menu" onPress={() => navigation.navigate('MainTabs', { screen: 'Menu' })} className="w-full" />
+          <Button title="Browse Menu" onPress={() => navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] })} className="w-full" />
       </View>
     );
   }

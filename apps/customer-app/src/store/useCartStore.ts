@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import * as SecureStore from 'expo-secure-store';
-import { FoodItem } from '../menu/types';
+import { FoodItem } from '../features/menu/types';
 
 interface CartItem extends FoodItem {
   quantity: number;

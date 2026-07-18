@@ -32,6 +32,13 @@ export const MenuScreen = () => {
     );
   }
 
+  // Type guard for success state
+  if (state.status !== 'success') {
+    return null;
+  }
+  
+  const menuData = state.data;
+
   const handleAddToCart = (item: any) => {
     addItem(item, []);
     Alert.alert(
@@ -66,7 +73,7 @@ export const MenuScreen = () => {
           showsHorizontalScrollIndicator={false} 
           className="flex-row"
         >
-          {state.data?.map((cat) => (
+          {menuData.map((cat) => (
             <TouchableOpacity 
               key={cat.category} 
               onPress={() => scrollToCategory(cat.category)}
@@ -86,7 +93,7 @@ export const MenuScreen = () => {
         contentContainerStyle={{ paddingTop: 24 }}
         showsVerticalScrollIndicator={false}
       >
-        {state.data?.map((cat) => (
+        {menuData.map((cat) => (
           <View 
             key={cat.category} 
             onLayout={(event) => {
