@@ -2,12 +2,12 @@ import { renderHook, waitFor } from '@testing-library/react-native';
 import { useProfile } from './useProfile';
 
 // Mock apiClient
-jest.mock('api-client', () => ({
+jest.mock('../../../services/api-client', () => ({
   get: jest.fn(),
   patch: jest.fn(),
 }));
 
-import apiClient from 'api-client';
+import apiClient from '../../../services/api-client';
 
 const mockUserProfile = {
   id: 'user-1',

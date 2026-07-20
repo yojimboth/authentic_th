@@ -2,11 +2,13 @@ import { renderHook, act } from '@testing-library/react-native';
 import { useMenu } from './useMenu';
 
 // Mock apiClient
-jest.mock('api-client', () => ({
+jest.mock('../../../services/api-client', () => ({
   get: jest.fn(),
+  post: jest.fn(),
+  patch: jest.fn(),
 }));
 
-import apiClient from 'api-client';
+import apiClient from '../../../services/api-client';
 
 const mockMenuData = [
   {

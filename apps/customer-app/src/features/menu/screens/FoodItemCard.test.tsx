@@ -38,7 +38,7 @@ describe('FoodItemCard', () => {
     const onAddToCart = jest.fn();
     render(<FoodItemCard item={item} onAddToCart={onAddToCart} />);
 
-    fireEvent.press(screen.getByText('Add'));
+    fireEvent.press(screen.getByText('Add to Order'));
 
     expect(onAddToCart).toHaveBeenCalledWith(item);
   });

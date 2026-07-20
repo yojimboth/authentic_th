@@ -46,8 +46,94 @@ When implementing code in future sessions:
 - **Printer Integration**: Web/Mobile apps cannot print directly; they must go through the cloud-to-local relay service described in the SAD/SDD.
 - **Payment Flow**: No credit card data should be handled by the Rust backend; use Stripe Elements/Checkout.
 
-## 🔍 Issue Investigation Protocol
-When an issue or bug is reported, follow this rigorous evidence-based process:
-1. **Analyze**: Thoroughly review the reported issue to understand the expected vs. actual behavior.
-2. **Fact-Check**: Do not assume the cause of an error. Always read the related source files, logs, and specifications to gather hard evidence.
-3. **Conclude**: Synthesize the findings to determine the definitive gap between the reported issue and the established facts.
+## 🔍 Issue Investigation Protocol (Binding Standard)
+
+When an issue or bug is reported, you MUST follow this rigorous evidence-based process. This is not optional — it is the binding standard for all defect investigation in this project.
+
+### The 10 Principles
+
+| # | Principle | Why It Matters |
+|---|-----------|----------------|
+| 1 | **Get exact symptom, not paraphrase** | Truncated errors hide the real cause. "It doesn't work" isn't enough — ask for the literal error text every time. |
+| 2 | **Confirm symptom is current before diagnosing** | Stale data = wrong diagnosis. Check timestamps, fresh triggers, no cached state. |
+| 3 | **Read actual code/config — don't reason abstractly** | Guessing produces "confidently wrong" answers. Grep the source, read the extractor/service/middleware. |
+| 4 | **Form narrow hypothesis, test before committing** | One curl, one grep, one query — verify before building on unverified assumptions. |
+| 5 | **Distinguish symptom from root cause** | 401 is where the trail starts, not ends. Go 2-3 layers deep: why 401? → expired token? → missing refresh? → bad secret? |
+| 6 | **Say "I was wrong" plainly, correct course** | Don't paper over mistakes. Flag openly the moment you catch it. |
+| 7 | **Verify every fix independently** | Don't trust reports — re-run the actual check yourself before calling something resolved. |
+| 8 | **Delegate real changes; investigate and verify directly** | Never edit application code or commit changes yourself — but reading, grepping, and running read-only diagnostic commands to actually understand a problem is different from fixing it, and you do plenty of the former yourself before handing the latter to the right specialized agent. |
+| 9 | **Pause for explicit confirmation before anything hard to reverse** | Push to main, delete DB rows, restrict SSH keys, restart live production services — ask first rather than assume. |
+| 10 | **Close the loop with a record, not just a fix** | Write up root cause, not just the patch — so the reasoning survives past the moment of fixing it. |
+
+### Defect Investigation Template (Required Format)
+
+When reporting or investigating a defect, use this template:
+
+```markdown
+## Defect: [Short Title]
+
+### Symptom (Exact, Not Paraphrased)
+- [Literal error text, URL, status code, stack trace]
+- [Not "it fails" — the actual error message]
+
+### Current State Confirmation
+- [Timestamp of last successful run]
+- [Fresh trigger evidence — not cached/stale]
+- [Verified reproducible]
+
+### Root Cause (After Reading Actual Code)
+- [File:line with actual code that caused issue]
+- [Why the symptom occurred — not just "bug"]
+
+### Test That Confirmed the Issue
+- [Exact command/test that proved the hypothesis]
+- [curl output, grep result, DB query result]
+
+### Fix Applied
+- [What changed, why it fixes the issue]
+- [Files modified, lines changed]
+
+### Verification
+- [Re-run of original test — show output]
+- [Cross-reference check — e.g., Stripe Dashboard + DB]
+- [Service status confirmed]
+
+### Mistakes Made (If Any)
+- [What you got wrong, how you corrected course]
+- [Don't paper over it — own it plainly]
+
+### Defect Log Entry
+- [Record for future reference — what happened, why, how fixed]
+```
+
+### Real Example: Billing Portal "company-not-found" 404
+
+**What went wrong initially**:
+- Symptom: Stripe billing portal button fails
+- First hypothesis: "Slug vs UUID issue" — tested with UUID
+- Result: Also 404 → concluded "slug theory was wrong" → chased wrong path
+- **Mistake**: Didn't read actual extractor code first; tested with wrong input
+
+**The correction**:
+1. **Read actual code** (Principle 3): Found extractor uses `company_id_slug` column
+2. **Owned the mistake** (Principle 6): "This is my mistake, not an app bug"
+3. **Retested correctly** (Principle 4): Used slug this time → worked
+4. **Verified fix independently** (Principle 7): Checked Stripe Dashboard + DB cross-reference
+5. **Closed the loop** (Principle 10): Root-cause writeup + defect log entry
+
+**Key insight**: Principle 3 (read actual code) is more valuable than Principle 4 (narrow test) when the test itself might be backwards. A narrow test only tells you something if you're certain you constructed it correctly — and reading the source is what lets you catch that you haven't.
+
+### When to Stop and Ask
+
+**Do NOT proceed without confirmation when**:
+- Pushing to `main` or any protected branch
+- Deleting or modifying production database rows
+- Restarting live production services
+- Restricting or changing SSH keys or deploy keys
+- Anything where getting it wrong has no easy recovery
+
+**Always ask first**: "Want me to proceed? This action is hard to reverse."
+
+---
+
+**This protocol is binding. Every defect investigation must follow these 10 principles and use the template above. No shortcuts, no "I'll just fix it quickly." Evidence-based, transparent, verified.**

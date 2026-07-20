@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Alert, Text, ActivityIndicator, Switch, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Alert, Text, ActivityIndicator, Switch, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../navigation/RootNavigator';
 import { Typography } from '../../../components/common/Typography';
 import { Button } from '../../../components/common/Button';
 import { useCartStore, cleanupCartData } from '../../../store/useCartStore';
+import { useAuthStore } from '../../../store/useAuthStore';
 import { useProfile, UserProfile } from '../../profile/hooks/useProfile';
-import apiClient from 'api-client';
+import apiClient from '../../../services/api-client';
 import { FoodItem } from '../../menu/types';
+import { currentConfig } from '../../../config/whiteLabelConfig';
 
 interface CheckoutScreenProps {
   onPaymentSuccess: () => void;
@@ -21,6 +23,7 @@ export const CheckoutScreen = ({ onPaymentSuccess }: CheckoutScreenProps) => {
   const navigation = useNavigation<NavigationProp>();
   // Store & Profile
   const { getTotal, clearCart } = useCartStore();
+  const { isMember, isGuest, setGuest } = useAuthStore();
   const { state: profileState } = useProfile();
   
   // Security: Properly narrow AsyncState type before accessing data
@@ -57,6 +60,14 @@ export const CheckoutScreen = ({ onPaymentSuccess }: CheckoutScreenProps) => {
   const handlePayment = async () => {
     setIsProcessing(true);
     try {
+      // Interception: Require guest or member status before proceeding to payment.
+      // If user is fully unauthenticated (no guest session), send them to AuthChoice.
+      if (!isMember() && !isGuest()) {
+        navigation.navigate('AuthChoice', { onReturnToCheckout: () => navigation.goBack() });
+        setIsProcessing(false);
+        return;
+      }
+
       // Security: Get cart items for payment request
       const cartItems = useCartStore.getState().items;
       
@@ -149,113 +160,260 @@ export const CheckoutScreen = ({ onPaymentSuccess }: CheckoutScreenProps) => {
   }
   
   return (
-    <View className="flex-1 bg-zinc-50">
-      <ScrollView className="px-6 pt-6 flex-1">
-        <View className="flex-row items-center mb-6">
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
           <TouchableOpacity 
             onPress={() => navigation.goBack()} 
-            className="p-2 -ml-2 mr-2"
+            style={styles.backButton}
           >
-            <Text className="text-brand-primary font-bold">← Back to Cart</Text>
+            <Text style={[styles.backText, { color: currentConfig.theme.primaryColor }]}>← Back to Cart</Text>
           </TouchableOpacity>
-          <Typography variant="h1" className="font-poppins flex-1 text-center">Checkout</Typography>
-          <View className="w-10" />
+          <Text style={styles.pageTitle}>Checkout</Text>
         </View>
         
-        <View className="p-4 bg-white border border-zinc-200 rounded-2xl mb-6">
-          <View className="flex-row justify-between items-center">
-            <Typography variant="h3">Fulfillment Method</Typography>
-            <Typography variant="body" className={`font-bold ${fulfillment === 'delivery' ? 'text-brand-primary' : 'text-zinc-600'}`}>
+        {/* Fulfillment Method Card */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Typography variant="h3" style={styles.cardTitle}>Fulfillment Method</Typography>
+            <Text style={[styles.cardValue, { color: fulfillment === 'delivery' ? currentConfig.theme.primaryColor : '#71717A' }, { fontWeight: '600' }]}>
               {fulfillment === 'delivery' ? 'Delivery' : 'Pickup'}
-            </Typography>
+            </Text>
           </View>
-          <Typography variant="caption" className="text-zinc-500 mt-1">
-            Changed in your cart
-          </Typography>
+          <Text style={styles.cardSubtitle}>Changed in your cart</Text>
         </View>
 
         {fulfillment === 'delivery' && (
-          <View className="p-4 bg-white border border-zinc-200 rounded-2xl mb-6">
-            <Typography variant="h3" className="mb-3">Delivery Address</Typography>
-            <View className="flex-row items-start">
-              <Typography variant="body" className="text-zinc-600 flex-1">
-                {userProfile?.primaryAddress || "No address set"}
-              </Typography>
-            </View>
-            <Button 
-              title="Change Address" 
-              variant="ghost" 
-              className="mt-4 py-1 text-brand-primary" 
-              onPress={() => {}} 
-            />
+          <View style={styles.card}>
+            <Typography variant="h3" style={[styles.cardTitle, { marginBottom: 12 }]}>Delivery Address</Typography>
+            <Text style={styles.addressText}>
+              {userProfile?.primaryAddress || "No address set"}
+            </Text>
+            <TouchableOpacity style={styles.changeAddressButton}>
+              <Text style={[styles.changeAddressText, { color: currentConfig.theme.primaryColor }]}>
+                Change Address
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
 
-        <View className="p-4 bg-white border border-zinc-200 rounded-2xl mb-6">
-          <View className="flex-row justify-between items-center mb-3">
-            <Typography variant="h3">Loyalty Points</Typography>
-            <View className="flex-row items-center bg-brand-primary/10 px-3 py-1 rounded-full">
-              <Typography variant="body" className="text-brand-primary font-bold">
+        {/* Loyalty Points Card */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Typography variant="h3" style={styles.cardTitle}>Loyalty Points</Typography>
+            <View style={[styles.pointsBadge, { backgroundColor: `${currentConfig.theme.primaryColor}10` }]}>
+              <Text style={[styles.pointsBadgeText, { color: currentConfig.theme.primaryColor }, { fontWeight: '700' }]}>
                 {userProfile?.loyaltyPoints || 0} pts
-              </Typography>
+              </Text>
             </View>
           </View>
-          <View className="flex-row items-center justify-between p-3 bg-zinc-50 rounded-xl">
-            <View>
-              <Typography variant="body" className="font-bold">Redeem Points</Typography>
-              <Typography variant="body" className="text-xs text-zinc-500">
+          <View style={styles.redemptionContainer}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#18181B', marginBottom: 4 }}>Redeem Points</Text>
+              <Text style={{ fontSize: 12, color: '#71717A' }}>
                 Save up to ${maxLoyaltyDiscount.toFixed(2)} on this order
-              </Typography>
+              </Text>
             </View>
             <Switch 
               value={useLoyaltyPoints} 
               onValueChange={setUseLoyaltyPoints}
-              trackColor={{ false: '#D4D4D8', true: '#4F46E5' }}
+              trackColor={{ false: '#D4D4D8', true: currentConfig.theme.primaryColor }}
+              thumbColor={useLoyaltyPoints ? currentConfig.theme.primaryColor : '#F4F4F5'}
             />
           </View>
         </View>
 
-        <View className="p-4 bg-white border border-zinc-200 rounded-2xl mb-8">
-          <Typography variant="h3" className="mb-4">Order Summary</Typography>
-          <View className="flex-row justify-between mb-3">
-            <Typography variant="body" className="text-zinc-500">Items Subtotal</Typography>
-            <Typography variant="body" className="font-medium">${subtotal.toFixed(2)}</Typography>
+        {/* Order Summary Card */}
+        <View style={[styles.card, { marginBottom: 100 }]}>
+          <Typography variant="h3" style={[styles.cardTitle, { marginBottom: 16 }]}>Order Summary</Typography>
+          
+          <View style={styles.summaryRow}>
+            <Text style={{ fontSize: 14, color: '#71717A' }}>Items Subtotal</Text>
+            <Text style={{ fontSize: 14, fontWeight: '500', color: '#18181B' }}>${subtotal.toFixed(2)}</Text>
           </View>
-          <View className="flex-row justify-between mb-3">
-            <Typography variant="body" className="text-zinc-500">
+          
+          <View style={styles.summaryRow}>
+            <Text style={{ fontSize: 14, color: '#71717A' }}>
               {fulfillment === 'delivery' ? 'Delivery Fee' : 'Pickup Fee'}
-            </Typography>
-            <Typography variant="body" className="font-medium">${deliveryFee.toFixed(2)}</Typography>
+            </Text>
+            <Text style={{ fontSize: 14, fontWeight: '500', color: '#18181B' }}>${deliveryFee.toFixed(2)}</Text>
           </View>
+          
           {useLoyaltyPoints && (
-            <View className="flex-row justify-between mb-3">
-              <Typography variant="body" className="text-green-600">Loyalty Discount</Typography>
-              <Typography variant="body" className="font-medium text-green-600">
+            <View style={styles.summaryRow}>
+              <Text style={{ fontSize: 14, color: '#10B981' }}>Loyalty Discount</Text>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#10B981' }}>
                 -${loyaltyDiscount.toFixed(2)}
-              </Typography>
+              </Text>
             </View>
           )}
-          <View className="flex-row justify-between pt-4 border-t border-zinc-200 mt-3">
-            <Typography variant="h2">Total Amount</Typography>
-            <Typography variant="h2" className="text-brand-primary font-bold">${total.toFixed(2)}</Typography>
+          
+          <View style={[styles.summaryRow, styles.totalRow]}>
+            <Text style={{ fontSize: 20, fontWeight: '700', color: '#18181B' }}>Total Amount</Text>
+            <Text style={{ fontSize: 20, fontWeight: '700', color: currentConfig.theme.primaryColor }}>${total.toFixed(2)}</Text>
           </View>
+          
           {userProfile && (
-            <View className="flex-row justify-between items-center mt-4 p-3 bg-yellow-50 rounded-xl border border-yellow-100">
-              <Text className="text-yellow-700 text-sm font-medium">Points you'll earn</Text>
-              <Text className="text-yellow-700 font-bold">{pointsToEarn} pts</Text>
+            <View style={[styles.earningsBadge, { backgroundColor: '#FEF9C3', borderColor: '#FDE68A' }]}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#92400E' }}>Points you'll earn</Text>
+              <Text style={{ fontSize: 16, fontWeight: '700', color: '#92400E' }}>{pointsToEarn} pts</Text>
             </View>
           )}
         </View>
       </ScrollView>
-      <View className="p-6 bg-white border-t border-zinc-200">
-        <Button 
-          title={isProcessing ? "Processing..." : `Pay $${total.toFixed(2)}`} 
-          onPress={handlePayment} 
-          className="py-4 text-lg" 
-          loading={isProcessing}
-        />
+      
+      {/* Sticky Bottom Payment Button */}
+      <View style={styles.paymentContainer}>
+        <TouchableOpacity 
+          style={[styles.paymentButton, { backgroundColor: isProcessing ? '#A1A1AA' : currentConfig.theme.primaryColor }]}
+          onPress={handlePayment}
+          disabled={isProcessing}
+        >
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFFFFF', textAlign: 'center' }}>
+            {isProcessing ? "Processing..." : `Pay $${total.toFixed(2)}`}
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
-
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FAFAFA',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 24,
+    marginBottom: 24,
+  },
+  backButton: {
+    padding: 8,
+    marginBottom: 8,
+  },
+  backText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  pageTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#18181B',
+    fontFamily: 'Poppins-Bold',
+  },
+  backButtonSpacer: {
+    width: 40,
+  },
+  card: {
+    marginHorizontal: 24,
+    marginBottom: 16,
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E4E4E7',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#18181B',
+  },
+  cardValue: {
+    fontSize: 16,
+  },
+  cardSubtitle: {
+    fontSize: 12,
+    color: '#71717A',
+  },
+  addressText: {
+    fontSize: 14,
+    color: '#71717A',
+    marginBottom: 12,
+  },
+  changeAddressButton: {
+    paddingVertical: 8,
+  },
+  changeAddressText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  pointsBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  pointsBadgeText: {
+    fontSize: 12,
+  },
+  redemptionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    backgroundColor: '#F4F4F5',
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  totalRow: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E4E4E7',
+  },
+  earningsBadge: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 16,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  paymentContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E4E4E7',
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  paymentButton: {
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

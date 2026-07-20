@@ -45,6 +45,7 @@ const canonicalTestRendererDir = path.dirname(
 
 module.exports = {
   preset: 'jest-expo',
+  setupFiles: ['./jest.setup.js'],
   moduleNameMapper: {
     '^react$': canonicalReactDir,
     '^react/(.*)$': `${canonicalReactDir}/$1`,

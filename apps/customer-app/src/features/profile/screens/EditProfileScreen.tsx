@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { View, TextInput, ScrollView, Alert } from 'react-native';
-import { Typography } from '../../../components/common/Typography';
-import { Button } from '../../../components/common/Button';
+import { View, TextInput, ScrollView, Alert, StyleSheet, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
 import { useProfile } from '../hooks/useProfile';
-import apiClient from 'api-client';
+import apiClient from '../../../services/api-client';
 import { RootStackParamList } from '../../../navigation/RootNavigator';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { currentConfig } from '../../../config/whiteLabelConfig';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'EditProfile'>;
 
@@ -107,88 +106,227 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
 
   if (state.status === 'loading') {
     return (
-      <View className="flex-1 bg-zinc-50 items-center justify-center">
-        <Typography variant="body">Loading Profile...</Typography>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={currentConfig.theme.primaryColor} />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-zinc-50">
-      <ScrollView className="px-6 pt-6">
-        <View className="mb-8">
-          <Typography variant="h2" className="font-poppins mb-2">Edit Profile</Typography>
-          <Typography variant="caption" className="text-zinc-500">
-            Update your contact information and primary address.
-          </Typography>
-        </View>
-
-        <View className="space-y-6">
-          <View>
-            <Typography variant="body" className="mb-2 ml-1 font-medium">Phone Number</Typography>
-            <TextInput
-              className={`p-4 bg-white border rounded-xl text-zinc-900 ${phoneError ? 'border-red-500' : 'border-zinc-200'}`}
-              value={phone}
-              onChangeText={(text) => {
-                setPhone(text);
-                if (phoneError) setPhoneError('');
-              }}
-              placeholder="Enter phone number"
-              keyboardType="phone-pad"
-              maxLength={20}
-            />
-            {phoneError ? (
-              <Typography variant="caption" className="text-red-500 mt-1 ml-1">
-                {phoneError}
-              </Typography>
-            ) : (
-              <Typography variant="caption" className="text-zinc-500 mt-1 ml-1">
-                Format: 04XX XXX XXX or +61 4XX XXX XXX
-              </Typography>
-            )}
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.title}>Edit Profile</Text>
+            <Text style={styles.subtitle}>
+              Update your contact information and primary address.
+            </Text>
           </View>
 
-          <View>
-            <Typography variant="body" className="mb-2 ml-1 font-medium">Primary Address</Typography>
-            <TextInput
-              className={`p-4 bg-white border rounded-xl text-zinc-900 min-h-[120px] ${addressError ? 'border-red-500' : 'border-zinc-200'}`}
-              value={address}
-              onChangeText={(text) => {
-                setAddress(text);
-                if (addressError) setAddressError('');
-              }}
-              placeholder="Enter your full address"
-              multiline={true}
-              textAlignVertical="top"
-              maxLength={500}
-            />
-            {addressError ? (
-              <Typography variant="caption" className="text-red-500 mt-1 ml-1">
-                {addressError}
-              </Typography>
-            ) : (
-              <Typography variant="caption" className="text-zinc-500 mt-1 ml-1">
-                Minimum 10 characters required
-              </Typography>
-            )}
-          </View>
-        </View>
+          {/* Form Fields */}
+          <View style={styles.form}>
+            {/* Phone Number Field */}
+            <View style={styles.field}>
+              <Text style={styles.label}>Phone Number</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  phoneError ? styles.inputError : null,
+                ]}
+                value={phone}
+                onChangeText={(text) => {
+                  setPhone(text);
+                  if (phoneError) setPhoneError('');
+                }}
+                placeholder="Enter phone number"
+                keyboardType="phone-pad"
+                maxLength={20}
+              />
+              {phoneError ? (
+                <Text style={styles.errorText}>{phoneError}</Text>
+              ) : (
+                <Text style={styles.helperText}>
+                  Format: 04XX XXX XXX or +61 4XX XXX XXX
+                </Text>
+              )}
+            </View>
 
-        <View className="flex-row space-x-4 mt-12">
-          <Button 
-            title="Cancel" 
-            variant="ghost" 
-            onPress={() => navigation.goBack()} 
-            className="flex-1"
-          />
-          <Button 
-            title="Save Changes" 
-            onPress={handleSave} 
-            loading={isSaving}
-            className="flex-1"
-          />
+            {/* Address Field */}
+            <View style={styles.field}>
+              <Text style={styles.label}>Primary Address</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  styles.textArea,
+                  addressError ? styles.inputError : null,
+                ]}
+                value={address}
+                onChangeText={(text) => {
+                  setAddress(text);
+                  if (addressError) setAddressError('');
+                }}
+                placeholder="Enter your full address"
+                multiline={true}
+                textAlignVertical="top"
+                maxLength={500}
+              />
+              {addressError ? (
+                <Text style={styles.errorText}>{addressError}</Text>
+              ) : (
+                <Text style={styles.helperText}>
+                  Minimum 10 characters required
+                </Text>
+              )}
+            </View>
+          </View>
+
+          {/* Action Buttons */}
+          <View style={styles.actions}>
+            <TouchableOpacity 
+              style={styles.cancelButton}
+              onPress={() => navigation.goBack()}
+              disabled={isSaving}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[
+                styles.saveButton,
+                isSaving && styles.saveButtonDisabled,
+              ]}
+              onPress={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Text style={styles.saveButtonText}>Save Changes</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ height: 40 }} />
         </View>
       </ScrollView>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FAFAFA',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    padding: 24,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAFAFA',
+  },
+  header: {
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#18181B',
+    fontFamily: 'Poppins-Bold',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#71717A',
+    fontFamily: 'Inter-Regular',
+    lineHeight: 20,
+  },
+  form: {
+    marginBottom: 32,
+  },
+  field: {
+    marginBottom: 24,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#18181B',
+    fontFamily: 'Inter-SemiBold',
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E4E4E7',
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    color: '#18181B',
+    fontFamily: 'Inter-Regular',
+  },
+  inputError: {
+    borderColor: '#DC2626',
+  },
+  textArea: {
+    minHeight: 120,
+    textAlignVertical: 'top',
+    paddingTop: 16,
+  },
+  errorText: {
+    fontSize: 12,
+    color: '#DC2626',
+    fontFamily: 'Inter-Regular',
+    marginTop: 6,
+    marginLeft: 4,
+  },
+  helperText: {
+    fontSize: 12,
+    color: '#71717A',
+    fontFamily: 'Inter-Regular',
+    marginTop: 6,
+    marginLeft: 4,
+    lineHeight: 16,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E4E4E7',
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#18181B',
+    fontFamily: 'Inter-SemiBold',
+  },
+  saveButton: {
+    flex: 1,
+    backgroundColor: '#3B82F6',
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  saveButtonDisabled: {
+    backgroundColor: '#E4E4E7',
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    fontFamily: 'Inter-SemiBold',
+  },
+});

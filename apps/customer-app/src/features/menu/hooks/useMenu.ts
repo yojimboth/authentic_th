@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import apiClient from 'api-client';
+import apiClient from '../../../services/api-client';
 import { currentConfig } from '../../../config/whiteLabelConfig';
 import { MenuCategory, AsyncState } from '../types';
 

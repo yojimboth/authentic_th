@@ -1,4 +1,4 @@
-export type OrderStatus = 'Preparing' | 'Out for Delivery' | 'Completed' | 'Cancelled';
+export type OrderStatus = 'Preparing' | 'Out for Delivery' | 'Ready' | 'Completed' | 'Cancelled';
 
 export interface OrderItem {
   id: string;
@@ -14,6 +14,8 @@ export interface Order {
   total: number;
   status: OrderStatus;
   items: OrderItem[];
-  deliveryAddress?: string;
+  deliveryAddress?: string | null;
   pointsEarned?: number;
+  estimatedDelivery?: string;
+  cancellationReason?: string;
 }

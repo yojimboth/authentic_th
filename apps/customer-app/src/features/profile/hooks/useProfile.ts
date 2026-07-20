@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import apiClient from 'api-client';
+import apiClient from '../../../services/api-client';
 import { AsyncState } from '../../menu/types';
 
 export interface UserProfile {

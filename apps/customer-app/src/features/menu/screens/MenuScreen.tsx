@@ -1,6 +1,6 @@
 import { currentConfig } from '../../../config/whiteLabelConfig';
 import React, { useRef } from 'react';
-import { View, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Alert, Text } from 'react-native';
 import { Typography } from '../../../components/common/Typography';
 import { StoreLogo } from '../../../components/common/StoreLogo';
 import { FoodItemCard } from '../components/FoodItemCard';
@@ -58,30 +58,47 @@ export const MenuScreen = () => {
   return (
     <View className="flex-1 bg-zinc-50">
       {/* Sticky Header */}
-      <View className="bg-zinc-50 px-4 pt-6 pb-4 border-b border-zinc-200 shadow-sm z-10">
-        <View className="flex-row items-center mb-6">
-          <StoreLogo logoSource={currentConfig.logoSource} size={48} style={{ marginRight: 24 }} />
-          <View className="flex-1">
-            <Typography variant="h1" className="font-poppins mb-1">{currentConfig.restaurantName}</Typography>
-            <Typography variant="body" className="text-zinc-500">Fresh, appetising, energetic.</Typography>
+      <View style={{ backgroundColor: '#FAFAFA', paddingHorizontal: 16, paddingTop: 24, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: '#E4E4E7', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 3, zIndex: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24 }}>
+          <StoreLogo logoSource={currentConfig.logoSource} size={56} />
+          <View style={{ flex: 1, marginLeft: 16 }}>
+            <Text style={{ fontSize: 28, fontWeight: '600', color: '#18181B', fontFamily: 'Poppins-Semibold', marginBottom: 4 }}>
+              {currentConfig.restaurantName}
+            </Text>
+            <Text style={{ fontSize: 16, color: '#71717A' }}>
+              {currentConfig.slogan}
+            </Text>
           </View>
         </View>
 
-        {/* Category Quick-Nav */}
+        {/* Category Quick-Nav - Horizontal scrollable pills */}
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false} 
-          className="flex-row"
+          style={{ flexDirection: 'row', paddingHorizontal: 0 }}
         >
           {menuData.map((cat) => (
             <TouchableOpacity 
               key={cat.category} 
               onPress={() => scrollToCategory(cat.category)}
-              className="mr-2 px-4 py-2 bg-white border border-zinc-200 rounded-full shadow-sm"
+              style={{ 
+                marginRight: 8, 
+                paddingHorizontal: 16, 
+                paddingVertical: 10, 
+                backgroundColor: '#FFFFFF', 
+                borderWidth: 1, 
+                borderColor: '#E4E4E7', 
+                borderRadius: 20,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.05,
+                shadowRadius: 2,
+                elevation: 2,
+              }}
             >
-              <Typography variant="caption" className="font-medium text-zinc-800">
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#3F3F46' }}>
                 {cat.category}
-              </Typography>
+              </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -102,13 +119,17 @@ export const MenuScreen = () => {
             }}
             className="mb-8"
           >
-            <Typography variant="h2" className="font-poppins mb-4 px-1">{cat.category}</Typography>
+            {/* Category Header - Semibold, slightly larger than item names */}
+            <Text style={{ fontSize: 22, fontWeight: '600', color: '#18181B', marginBottom: 24, paddingLeft: 4, fontFamily: 'Poppins-Semibold' }}>
+              {cat.category}
+            </Text>
             <View className="flex-col">
               {cat.items.map((item) => (
                 <View key={item.id} className="w-full mb-4">
                   <FoodItemCard 
                     item={item} 
-                    onAddToCart={handleAddToCart} 
+                    onAddToCart={handleAddToCart}
+                    category={cat.category}
                   />
                 </View>
               ))}
