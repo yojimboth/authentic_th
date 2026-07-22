@@ -5,6 +5,9 @@ export type RootStackParamList = {
   OrderDetail: { orderId: string };
   EditItem: { itemId: string };
   EditProfile: undefined;
+  NotificationPreferences: undefined;
+  PrinterConfiguration: undefined;
+  HelpSupport: undefined;
 };
 
 export type MainTabParamList = {

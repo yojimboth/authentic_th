@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  StyleSheet,
 } from 'react-native';
 import { SalesSummary, PopularItem } from '../types';
 import { SummaryCard } from '../components/SummaryCard';
@@ -28,23 +29,25 @@ export const AnalyticsScreen = () => {
   const maxChartValue = Math.max(...mockRevenueChartData.map((d) => d.value));
 
   return (
-    <View className="flex-1 bg-zinc-50">
-      <View className="bg-white px-4 pt-4 pb-3 border-b border-zinc-200">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-2xl font-bold text-zinc-900">Analytics</Text>
-          <View className="flex-row gap-2">
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerRow}>
+          <Text style={styles.pageTitle}>Analytics</Text>
+          <View style={styles.periodContainer}>
             {(['today', 'week', 'month'] as const).map((p) => (
               <TouchableOpacity
                 key={p}
                 onPress={() => setPeriod(p)}
-                className={`px-3 py-1.5 rounded-full ${
-                  period === p ? 'bg-brand-primary' : 'bg-zinc-100'
-                }`}
+                style={[
+                  styles.periodButton,
+                  period === p && styles.periodButtonActive,
+                ]}
               >
                 <Text
-                  className={`text-xs font-medium ${
-                    period === p ? 'text-white' : 'text-zinc-600'
-                  }`}
+                  style={[
+                    styles.periodText,
+                    period === p && styles.periodTextActive,
+                  ]}
                 >
                   {p.charAt(0).toUpperCase() + p.slice(1)}
                 </Text>
@@ -55,19 +58,19 @@ export const AnalyticsScreen = () => {
       </View>
 
       <ScrollView
-        className="flex-1 px-4 pt-4"
+        style={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4F46E5" />
         }
       >
         {isLoading && !refreshing ? (
-          <View className="items-center justify-center py-12">
+          <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#4F46E5" />
           </View>
         ) : sales ? (
           <>
-            <View className="flex-row gap-3 mb-6">
+            <View style={styles.summaryRow}>
               <SummaryCard
                 title="Revenue"
                 value={formatCurrency(sales.totalRevenue)}
@@ -82,7 +85,7 @@ export const AnalyticsScreen = () => {
               />
             </View>
 
-            <View className="mb-6">
+            <View style={styles.summaryCardContainer}>
               <SummaryCard
                 title="Average Order Value"
                 value={formatCurrency(sales.averageOrderValue)}
@@ -91,26 +94,28 @@ export const AnalyticsScreen = () => {
               />
             </View>
 
-            <View className="bg-white rounded-xl p-4 mb-6 border border-zinc-200">
-              <Text className="text-base font-semibold text-zinc-900 mb-4">Weekly Revenue</Text>
-              <View className="flex-row items-end justify-between h-32 gap-2">
+            <View style={styles.chartCard}>
+              <Text style={styles.chartTitle}>Weekly Revenue</Text>
+              <View style={styles.chartContainer}>
                 {mockRevenueChartData.map((day, index) => {
                   const heightPercent = (day.value / maxChartValue) * 100;
                   return (
-                    <View key={index} className="flex-1 items-center">
+                    <View key={index} style={styles.chartBarContainer}>
                       <View
-                        className="w-full rounded-t bg-brand-primary"
-                        style={{ height: heightPercent, minHeight: 8 }}
+                        style={[
+                          styles.chartBar,
+                          { height: heightPercent, minHeight: 8 },
+                        ]}
                       />
-                      <Text className="text-xs text-zinc-400 mt-1">{day.label}</Text>
+                      <Text style={styles.chartLabel}>{day.label}</Text>
                     </View>
                   );
                 })}
               </View>
             </View>
 
-            <View className="bg-white rounded-xl p-4 mb-8 border border-zinc-200">
-              <Text className="text-base font-semibold text-zinc-900 mb-3">Popular Items</Text>
+            <View style={styles.popularItemsCard}>
+              <Text style={styles.popularItemsTitle}>Popular Items</Text>
               {popularItems.slice(0, 5).map((item, index) => (
                 <PopularItemRow key={item.itemId} item={item} rank={index + 1} />
               ))}
@@ -121,3 +126,126 @@ export const AnalyticsScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  pageTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#111827',
+    fontFamily: 'Inter-Bold',
+  },
+  periodContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  periodButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
+  },
+  periodButtonActive: {
+    backgroundColor: '#4F46E5',
+  },
+  periodText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#4B5563',
+    fontFamily: 'Inter-Medium',
+  },
+  periodTextActive: {
+    color: '#FFFFFF',
+  },
+  scrollContent: {
+    flex: 1,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 48,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 12,
+    paddingHorizontal: 16,
+  },
+  summaryCardContainer: {
+    marginBottom: 12,
+    paddingHorizontal: 16,
+  },
+  chartCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    marginLeft: 16,
+    marginRight: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  chartTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    fontFamily: 'Inter-SemiBold',
+    marginBottom: 16,
+  },
+  chartContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    height: 128,
+    gap: 8,
+  },
+  chartBarContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  chartBar: {
+    width: '100%',
+    backgroundColor: '#4F46E5',
+    borderRadius: 4,
+  },
+  chartLabel: {
+    fontSize: 11,
+    fontWeight: '400',
+    color: '#9CA3AF',
+    fontFamily: 'Inter-Regular',
+    marginTop: 6,
+  },
+  popularItemsCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    marginLeft: 16,
+    marginRight: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  popularItemsTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    fontFamily: 'Inter-SemiBold',
+    marginBottom: 12,
+  },
+});

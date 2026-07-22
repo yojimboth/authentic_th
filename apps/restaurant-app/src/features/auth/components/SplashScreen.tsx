@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { StoreLogo } from '../../../components/common/StoreLogo';
-import { Typography } from '../../../components/common/Typography';
-import { login } from '../../../utils/mockAuth';
 
 const SPLASH_DURATION_MS = 1500;
 
@@ -11,39 +9,62 @@ interface SplashScreenProps {
 }
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
-  const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        await login();
-      } catch (error) {
-        console.error('Auth initialization failed:', error);
-      } finally {
-        setIsLoading(false);
-        setTimeout(onComplete, SPLASH_DURATION_MS);
-      }
-    };
-
-    initializeAuth();
+    // Wait minimum 1.5 seconds before transitioning to Login
+    const timer = setTimeout(onComplete, SPLASH_DURATION_MS);
+    return () => clearTimeout(timer);
   }, [onComplete]);
 
   return (
-    <View className="flex-1 items-center justify-center p-6 bg-white">
-      <StoreLogo size={120} className="mb-8" />
-      <Typography variant="h2" className="mb-2 text-center">
-        Restaurant Manager
-      </Typography>
-      <Typography variant="body" className="text-zinc-500 text-center mb-6">
-        Manage your restaurant with ease
-      </Typography>
-      {isLoading ? (
+    <View style={styles.container}>
+      <StoreLogo size={120} style={styles.logo} />
+      
+      <View style={styles.content}>
+        <Text style={styles.title}>Restaurant Manager</Text>
+        <Text style={styles.subtitle}>
+          Manage your restaurant with ease
+        </Text>
+      </View>
+
+      <View style={styles.footer}>
         <ActivityIndicator size="large" color="#4F46E5" />
-      ) : (
-        <Typography variant="caption" className="text-zinc-400">
-          Authenticating...
-        </Typography>
-      )}
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  logo: {
+    marginBottom: 32,
+  },
+  content: {
+    alignItems: 'center',
+    marginBottom: 48,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#111827',
+    textAlign: 'center',
+    marginBottom: 8,
+    fontFamily: 'Inter-Bold',
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: '400',
+    color: '#6B7280',
+    textAlign: 'center',
+    lineHeight: 22,
+    fontFamily: 'Inter-Regular',
+  },
+  footer: {
+    alignItems: 'center',
+  },
+});

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Order } from '../types';
 import { OrderStatusBadge } from './OrderStatusBadge';
 import { formatCurrency } from '../../../utils/formatCurrency';
@@ -21,72 +21,165 @@ export const OrderCard = ({ order, onPress, onAccept, onPrepare, onComplete, sho
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="bg-white rounded-xl p-4 mb-3 border border-zinc-200"
+      style={styles.card}
       activeOpacity={0.7}
     >
-      <View className="flex-row items-center justify-between mb-2">
-        <Text className="text-sm font-bold text-zinc-900">
-          {order.id.toUpperCase().replace('ORD-', 'ORD-')}
+      <View style={styles.headerRow}>
+        <Text style={styles.orderId}>
+          {order.id.toUpperCase()}
         </Text>
         <OrderStatusBadge status={order.status} />
       </View>
 
-      <Text className="text-sm text-zinc-700 mb-1" numberOfLines={1}>
+      <Text style={styles.itemsText} numberOfLines={1}>
         {order.items.slice(0, 2).map((item) => `${item.name} x${item.quantity}`).join(', ')}
         {order.items.length > 2 && (
-          <Text className="text-zinc-400"> +{order.items.length - 2} more</Text>
+          <Text style={styles.moreText}> +{order.items.length - 2} more</Text>
         )}
       </Text>
 
-      <View className="flex-row items-center justify-between">
-        <Text className="text-sm font-semibold text-zinc-900">
+      <View style={styles.footerRow}>
+        <Text style={styles.totalText}>
           {formatCurrency(order.total)}
         </Text>
-        <Text className="text-xs text-zinc-400">
+        <Text style={styles.timeText}>
           {formatRelativeTime(order.createdAt)}
         </Text>
       </View>
 
       {showActions && isActive && (
-        <View className="flex-row mt-3 gap-2">
+        <View style={styles.actionsRow}>
           {order.status === 'Pending' && onAccept && (
             <TouchableOpacity
               onPress={onAccept}
-              className="flex-1 bg-brand-primary py-2 rounded-lg items-center"
+              style={[styles.actionButton, styles.primaryButton]}
               activeOpacity={0.8}
             >
-              <Text className="text-white text-sm font-semibold">Accept</Text>
+              <Text style={styles.primaryButtonText}>Accept</Text>
             </TouchableOpacity>
           )}
           {order.status === 'Accepted' && onPrepare && (
             <TouchableOpacity
               onPress={onPrepare}
-              className="flex-1 bg-brand-primary py-2 rounded-lg items-center"
+              style={[styles.actionButton, styles.primaryButton]}
               activeOpacity={0.8}
             >
-              <Text className="text-white text-sm font-semibold">Prepare</Text>
+              <Text style={styles.primaryButtonText}>Prepare</Text>
             </TouchableOpacity>
           )}
           {(order.status === 'Preparing' || order.status === 'Ready') && onComplete && (
             <TouchableOpacity
               onPress={onComplete}
-              className="flex-1 bg-brand-success py-2 rounded-lg items-center"
+              style={[styles.actionButton, styles.successButton]}
               activeOpacity={0.8}
             >
-              <Text className="text-white text-sm font-semibold">
-                {order.status === 'Preparing' ? 'Complete' : 'Complete'}
+              <Text style={styles.successButtonText}>
+                Complete
               </Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity
             onPress={onPress}
-            className="flex-1 border border-zinc-300 py-2 rounded-lg items-center"
+            style={[styles.actionButton, styles.secondaryButton]}
             activeOpacity={0.8}
           >
-            <Text className="text-zinc-600 text-sm font-semibold">Details</Text>
+            <Text style={styles.secondaryButtonText}>Details</Text>
           </TouchableOpacity>
         </View>
       )}
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  orderId: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#111827',
+    fontFamily: 'Inter-Bold',
+  },
+  itemsText: {
+    fontSize: 14,
+    color: '#374151',
+    fontFamily: 'Inter-Regular',
+    marginBottom: 12,
+    lineHeight: 20,
+  },
+  moreText: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    fontFamily: 'Inter-Regular',
+  },
+  footerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  totalText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#111827',
+    fontFamily: 'Inter-SemiBold',
+  },
+  timeText: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    fontFamily: 'Inter-Regular',
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 12,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primaryButton: {
+    backgroundColor: '#4F46E5',
+  },
+  primaryButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    fontFamily: 'Inter-SemiBold',
+  },
+  successButton: {
+    backgroundColor: '#10B981',
+  },
+  successButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    fontFamily: 'Inter-SemiBold',
+  },
+  secondaryButton: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+  },
+  secondaryButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#4B5563',
+    fontFamily: 'Inter-SemiBold',
+  },
+});

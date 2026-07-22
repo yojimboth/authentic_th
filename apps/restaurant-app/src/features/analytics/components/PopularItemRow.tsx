@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { PopularItem } from '../types';
 import { formatCurrency } from '../../../utils/formatCurrency';
 
@@ -10,15 +10,62 @@ interface PopularItemRowProps {
 
 export const PopularItemRow = ({ item, rank }: PopularItemRowProps) => {
   return (
-    <View className="flex-row items-center py-3 border-b border-zinc-100 last:border-b-0">
-      <View className="w-7 h-7 rounded-full bg-brand-primary items-center justify-center mr-3">
-        <Text className="text-white text-xs font-bold">{rank}</Text>
+    <View style={styles.row}>
+      <View style={styles.rankBadge}>
+        <Text style={styles.rankText}>{rank}</Text>
       </View>
-      <View className="flex-1">
-        <Text className="text-sm font-medium text-zinc-900">{item.itemName}</Text>
+      <View style={styles.itemInfo}>
+        <Text style={styles.itemName}>{item.itemName}</Text>
       </View>
-      <Text className="text-sm text-zinc-500 mr-4">{item.quantitySold} sold</Text>
-      <Text className="text-sm font-semibold text-zinc-900">{formatCurrency(item.revenue)}</Text>
+      <Text style={styles.quantitySold}>{item.quantitySold} sold</Text>
+      <Text style={styles.revenue}>{formatCurrency(item.revenue)}</Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  rankBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#4F46E5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  rankText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    fontFamily: 'Inter-Bold',
+  },
+  itemInfo: {
+    flex: 1,
+  },
+  itemName: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#111827',
+    fontFamily: 'Inter-Medium',
+  },
+  quantitySold: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#6B7280',
+    fontFamily: 'Inter-Regular',
+    marginRight: 16,
+  },
+  revenue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+    fontFamily: 'Inter-SemiBold',
+  },
+});

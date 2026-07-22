@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { OrderStatus } from '../types';
 
 interface OrderStatusBadgeProps {
@@ -7,19 +7,32 @@ interface OrderStatusBadgeProps {
 }
 
 const statusStyles: Record<OrderStatus, { bg: string; text: string }> = {
-  Pending: { bg: 'bg-orange-100', text: 'text-orange-600' },
-  Accepted: { bg: 'bg-blue-100', text: 'text-blue-600' },
-  Preparing: { bg: 'bg-yellow-100', text: 'text-yellow-600' },
-  Ready: { bg: 'bg-green-100', text: 'text-green-600' },
-  Completed: { bg: 'bg-gray-100', text: 'text-gray-600' },
-  Cancelled: { bg: 'bg-red-100', text: 'text-red-600' },
+  Pending: { bg: '#FEF3C7', text: '#92400E' },
+  Accepted: { bg: '#DBEAFE', text: '#1E40AF' },
+  Preparing: { bg: '#FEF9C3', text: '#854D0E' },
+  Ready: { bg: '#D1FAE5', text: '#065F46' },
+  Completed: { bg: '#F3F4F6', text: '#374151' },
+  Cancelled: { bg: '#FFE4E6', text: '#991B1B' },
 };
 
 export const OrderStatusBadge = ({ status }: OrderStatusBadgeProps) => {
   const style = statusStyles[status] || statusStyles.Pending;
   return (
-    <View className={`px-2.5 py-1 rounded-full ${style.bg}`}>
-      <Text className={`text-xs font-semibold ${style.text}`}>{status}</Text>
+    <View style={[styles.badge, { backgroundColor: style.bg }]}>
+      <Text style={[styles.statusText, { color: style.text }]}>{status}</Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
+  },
+});

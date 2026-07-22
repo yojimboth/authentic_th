@@ -6,29 +6,37 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  StyleSheet,
+  TextInput as RNTextInput,
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../navigation/types';
-import { TextInput } from '../../../components/common/TextInput';
 import { useMenu } from '../hooks/useMenu';
 import { mockMenuCategories } from '../../../services/mockData';
 
 type EditItemScreenProps = StackScreenProps<RootStackParamList, 'EditItem'>;
 
 export const EditItemScreen = ({ navigation, route }: EditItemScreenProps) => {
-  const { itemId } = route.params;
-  const { updateMenuItem } = useMenu();
+  const { itemId, categoryId, isNew } = route.params as {
+    itemId?: string;
+    categoryId?: string;
+    isNew?: boolean;
+  };
+  const { updateMenuItem, addMenuItem } = useMenu();
 
-  const currentItem = mockMenuCategories
+  const currentItem = isNew || !itemId ? null : mockMenuCategories
     .flatMap((cat) => cat.items)
     .find((item) => item.id === itemId);
+
+  const defaultCategory = categoryId || (currentItem ? currentItem.category : 'Main Course');
 
   const [name, setName] = useState(currentItem?.name || '');
   const [description, setDescription] = useState(currentItem?.description || '');
   const [price, setPrice] = useState(currentItem?.price?.toString() || '');
   const [preparationTime, setPreparationTime] = useState(currentItem?.preparationTime?.toString() || '');
   const [isAvailable, setIsAvailable] = useState(currentItem?.isAvailable ?? true);
+  const [selectedCategory, setSelectedCategory] = useState(defaultCategory);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validate = (): boolean => {
@@ -54,110 +62,357 @@ export const EditItemScreen = ({ navigation, route }: EditItemScreenProps) => {
   const handleSave = async () => {
     if (!validate()) return;
     try {
-      const updates: Partial<{ name: string; description: string; price: number; preparationTime: number; isAvailable: boolean }> = {
-        name: name.trim(),
-        description: description.trim(),
-        price: parseFloat(price),
-        preparationTime: parseInt(preparationTime, 10),
-        isAvailable,
-      };
-      await updateMenuItem(itemId, updates);
-      Alert.alert('Success', 'Menu item updated');
+      if (isNew || !itemId) {
+        // Add new item
+        await addMenuItem(selectedCategory, {
+          name: name.trim(),
+          description: description.trim(),
+          price: parseFloat(price),
+          preparationTime: parseInt(preparationTime, 10),
+          isAvailable,
+          category: selectedCategory,
+          tenantId: 'tenant_001',
+          imageUrl: '',
+        });
+      } else {
+        // Update existing item
+        const updates: Partial<MenuItem> = {
+          name: name.trim(),
+          description: description.trim(),
+          price: parseFloat(price),
+          preparationTime: parseInt(preparationTime, 10),
+          isAvailable,
+        };
+        if (selectedCategory !== currentItem!.category) {
+          updates.category = selectedCategory;
+        }
+        await updateMenuItem(itemId, updates);
+      }
+      Alert.alert('Success', isNew ? 'Menu item created' : 'Menu item updated');
       navigation.goBack();
     } catch (err) {
-      Alert.alert('Error', 'Failed to update menu item');
+      Alert.alert('Error', 'Failed to save menu item');
     }
   };
 
-  if (!currentItem) {
+  if (!currentItem && !isNew) {
     return (
-      <View className="flex-1 items-center justify-center bg-zinc-50">
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4F46E5" />
+        <Text style={styles.loadingText}>Item not found</Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-zinc-50">
-      <View className="bg-white px-4 pt-4 pb-3 border-b border-zinc-200">
-        <View className="flex-row items-center justify-between">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="py-2">
-            <Text className="text-brand-primary text-base font-semibold">← Back</Text>
-          </TouchableOpacity>
-          <Text className="text-lg font-bold text-zinc-900">Edit Menu Item</Text>
-          <View className="w-16" />
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerRow}>
+          <View style={styles.headerSpacer} />
+          <Text style={styles.title}>
+          {isNew ? 'Add Menu Item' : 'Edit Menu Item'}
+        </Text>
+          <View style={styles.headerSpacer} />
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-4 pt-4" showsVerticalScrollIndicator={false}>
-        <View className="bg-white rounded-xl p-4 mb-4 border border-zinc-200">
-          <TextInput
-            label="Name"
-            value={name}
-            onChangeText={(text) => { setName(text); setErrors((prev) => ({ ...prev, name: '' })); }}
-            error={errors.name}
-            placeholder="Enter item name"
-          />
+      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Item Details Card */}
+        <View style={styles.card}>
+          {/* Category Selector */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Category</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categorySelector}>
+              {mockMenuCategories.map((cat) => (
+                <TouchableOpacity
+                  key={cat.id}
+                  onPress={() => setSelectedCategory(cat.name)}
+                  style={[
+                    styles.categoryChip,
+                    selectedCategory === cat.name && styles.categoryChipActive,
+                  ]}
+                >
+                  <Text style={[
+                    styles.categoryChipText,
+                    selectedCategory === cat.name && styles.categoryChipTextActive,
+                  ]}>
+                    {cat.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
 
-          <TextInput
-            label="Description"
-            value={description}
-            onChangeText={(text) => setDescription(text)}
-            placeholder="Enter description"
-            multiline
-            className="h-20"
-          />
+          {/* Name Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Name</Text>
+            <RNTextInput
+              style={[styles.input, errors.name && styles.inputError]}
+              value={name}
+              onChangeText={(text) => { setName(text); setErrors((prev) => ({ ...prev, name: '' })); }}
+              placeholder="Enter item name"
+              maxLength={100}
+            />
+            {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
+          </View>
 
-          <TextInput
-            label="Price ($)"
-            value={price}
-            onChangeText={(text) => { setPrice(text); setErrors((prev) => ({ ...prev, price: '' })); }}
-            error={errors.price}
-            placeholder="0.00"
-            keyboardType="decimal-pad"
-          />
+          {/* Description Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Description</Text>
+            <RNTextInput
+              style={[styles.input, styles.textArea]}
+              value={description}
+              onChangeText={(text) => setDescription(text)}
+              placeholder="Enter description"
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+          </View>
 
-          <TextInput
-            label="Preparation Time (minutes)"
-            value={preparationTime}
-            onChangeText={(text) => { setPreparationTime(text); setErrors((prev) => ({ ...prev, time: '' })); }}
-            error={errors.time}
-            placeholder="10"
-            keyboardType="number-pad"
-          />
+          {/* Price Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Price ($)</Text>
+            <RNTextInput
+              style={[styles.input, errors.price && styles.inputError]}
+              value={price}
+              onChangeText={(text) => { setPrice(text); setErrors((prev) => ({ ...prev, price: '' })); }}
+              placeholder="0.00"
+              keyboardType="decimal-pad"
+            />
+            {errors.price ? <Text style={styles.errorText}>{errors.price}</Text> : null}
+          </View>
 
-          <View className="flex-row items-center justify-between py-3 border-t border-zinc-200 mt-2">
-            <Text className="text-base text-zinc-700">Availability</Text>
+          {/* Preparation Time Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Preparation Time (minutes)</Text>
+            <RNTextInput
+              style={[styles.input, errors.time && styles.inputError]}
+              value={preparationTime}
+              onChangeText={(text) => { setPreparationTime(text); setErrors((prev) => ({ ...prev, time: '' })); }}
+              placeholder="10"
+              keyboardType="number-pad"
+            />
+            {errors.time ? <Text style={styles.errorText}>{errors.time}</Text> : null}
+          </View>
+
+          {/* Availability Toggle */}
+          <View style={styles.toggleContainer}>
+            <Text style={styles.toggleLabel}>Availability</Text>
             <TouchableOpacity
               onPress={() => setIsAvailable(!isAvailable)}
-              className={`w-12 h-7 rounded-full items-center justify-center ${
-                isAvailable ? 'bg-brand-success' : 'bg-zinc-300'
-              }`}
+              style={[styles.toggleTrack, { backgroundColor: isAvailable ? '#10B981' : '#D1D5DB' }]}
             >
-              <View
-                className={`w-5 h-5 rounded-full bg-white ${
-                  isAvailable ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
+              <View style={[
+                styles.toggleThumb,
+                { transform: [{ translateX: isAvailable ? 20 : 0 }] },
+              ]} />
             </TouchableOpacity>
           </View>
         </View>
 
-        <View className="flex-row gap-3 mb-8">
+        {/* Action Buttons */}
+        <View style={styles.actionsContainer}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            className="flex-1 border border-zinc-300 py-3 rounded-lg items-center"
+            style={[styles.actionButton, styles.cancelButton]}
           >
-            <Text className="text-zinc-600 font-semibold">Cancel</Text>
+            <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleSave}
-            className="flex-1 bg-brand-primary py-3 rounded-lg items-center"
+            style={[styles.actionButton, styles.saveButton]}
           >
-            <Text className="text-white font-semibold">Save Changes</Text>
+            <Text style={styles.saveButtonText}>Save Changes</Text>
           </TouchableOpacity>
         </View>
+
+        <View style={styles.bottomSpacer} />
       </ScrollView>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F9FAFB',
+  },
+  loadingText: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#6B7280',
+    fontFamily: 'Inter-Regular',
+    marginTop: 12,
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111827',
+    fontFamily: 'Inter-Bold',
+  },
+  headerSpacer: {
+    width: 64,
+  },
+  scrollContent: {
+    flex: 1,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    marginLeft: 16,
+    marginRight: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  inputContainer: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#374151',
+    fontFamily: 'Inter-Medium',
+    marginBottom: 8,
+  },
+  categorySelector: {
+    maxHeight: 40,
+  },
+  categoryChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
+    marginRight: 8,
+  },
+  categoryChipActive: {
+    backgroundColor: '#4F46E5',
+  },
+  categoryChipText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#4B5563',
+    fontFamily: 'Inter-Medium',
+  },
+  categoryChipTextActive: {
+    color: '#FFFFFF',
+  },
+  input: {
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: '#111827',
+    fontFamily: 'Inter-Regular',
+    minHeight: 44,
+  },
+  inputError: {
+    borderColor: '#EF4444',
+  },
+  textArea: {
+    minHeight: 100,
+    textAlignVertical: 'top',
+    paddingTop: 12,
+  },
+  errorText: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#EF4444',
+    fontFamily: 'Inter-Regular',
+    marginTop: 4,
+    marginLeft: 4,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+  },
+  toggleLabel: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#374151',
+    fontFamily: 'Inter-Medium',
+  },
+  toggleTrack: {
+    width: 44,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    padding: 2,
+  },
+  toggleThumb: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+    elevation: 2,
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+    paddingTop: 8,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelButton: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#4B5563',
+    fontFamily: 'Inter-SemiBold',
+  },
+  saveButton: {
+    backgroundColor: '#4F46E5',
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    fontFamily: 'Inter-SemiBold',
+  },
+  bottomSpacer: {
+    height: 16,
+  },
+});

@@ -440,7 +440,6 @@ Splash → Login → MainTabs (Orders | Menu | Analytics | Profile)
 │  ┌─ Settings ────────────────────────┐  │
 │  │  [Notification Preferences]   →   │  │
 │  │  [Printer Configuration]      →   │  │
-│  │  [Subscription Plan]          →   │  │
 │  │  [Help & Support]             →   │  │
 │  └──────────────────────────────────┘  │
 │                                         │

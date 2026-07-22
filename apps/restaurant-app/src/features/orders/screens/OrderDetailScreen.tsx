@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  StyleSheet,
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -26,9 +27,9 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
 
   if (!order) {
     return (
-      <View className="flex-1 items-center justify-center bg-zinc-50">
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4F46E5" />
-        <Text className="text-zinc-500 mt-2">Loading order...</Text>
+        <Text style={styles.loadingText}>Loading order...</Text>
       </View>
     );
   }
@@ -65,98 +66,104 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
   };
 
   const actionButton = getActionButton();
+  const isReadyAction = ['Preparing', 'Ready'].includes(order.status);
 
   return (
-    <View className="flex-1 bg-zinc-50">
-      <View className="bg-white px-4 pt-4 pb-3 border-b border-zinc-200">
-        <View className="flex-row items-center justify-between">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="py-2">
-            <Text className="text-brand-primary text-base font-semibold">← Back</Text>
-          </TouchableOpacity>
-          <Text className="text-base font-bold text-zinc-900">
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerRow}>
+          <View style={styles.headerSpacer} />
+          <Text style={styles.orderTitle}>
             Order #{order.id.toUpperCase().replace('ORD-', '')}
           </Text>
-          <View className="w-16" />
+          <View style={styles.headerSpacer} />
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-4 pt-4" showsVerticalScrollIndicator={false}>
-        <View className="bg-white rounded-xl p-4 mb-4 border border-zinc-200">
-          <Text className="text-sm font-medium text-zinc-500 mb-2">Order Status</Text>
-          <View className="flex-row items-center justify-between">
+      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Order Status Card */}
+        <View style={styles.card}>
+          <Text style={styles.cardLabel}>Order Status</Text>
+          <View style={styles.statusRow}>
             <OrderStatusBadge status={order.status} />
-            <Text className="text-xs text-zinc-400">
+            <Text style={styles.updatedText}>
               Updated {formatRelativeTime(order.updatedAt)}
             </Text>
           </View>
         </View>
 
-        <View className="bg-white rounded-xl p-4 mb-4 border border-zinc-200">
-          <Text className="text-base font-semibold text-zinc-900 mb-3">Order Items</Text>
+        {/* Order Items Card */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Order Items</Text>
           {order.items.map((item, index) => (
-            <View key={item.id} className="flex-row items-center justify-between mb-2">
-              <View className="flex-1">
-                <Text className="text-base text-zinc-900">{item.name}</Text>
-                <Text className="text-sm text-zinc-500">x{item.quantity}</Text>
+            <View key={item.id} style={styles.itemRow}>
+              <View style={styles.itemInfo}>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemQty}>x{item.quantity}</Text>
               </View>
-              <Text className="text-base font-medium text-zinc-900">
+              <Text style={styles.itemPrice}>
                 {formatCurrency(item.price * item.quantity)}
               </Text>
             </View>
           ))}
-          <View className="border-t border-zinc-200 mt-3 pt-3">
-            <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-sm text-zinc-600">Subtotal</Text>
-              <Text className="text-sm text-zinc-900">{formatCurrency(order.subtotal)}</Text>
+          <View style={styles.divider} />
+          <View style={styles.totalsContainer}>
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Subtotal</Text>
+              <Text style={styles.totalValue}>{formatCurrency(order.subtotal)}</Text>
             </View>
-            <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-sm text-zinc-600">Delivery Fee</Text>
-              <Text className="text-sm text-zinc-900">{formatCurrency(order.deliveryFee)}</Text>
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Delivery Fee</Text>
+              <Text style={styles.totalValue}>{formatCurrency(order.deliveryFee)}</Text>
             </View>
             {order.loyaltyDiscount > 0 && (
-              <View className="flex-row items-center justify-between mb-1">
-                <Text className="text-sm text-zinc-600">Loyalty Discount</Text>
-                <Text className="text-sm text-brand-success">-{formatCurrency(order.loyaltyDiscount)}</Text>
+              <View style={styles.totalRow}>
+                <Text style={styles.totalLabel}>Loyalty Discount</Text>
+                <Text style={styles.discountValue}>-{formatCurrency(order.loyaltyDiscount)}</Text>
               </View>
             )}
-            <View className="flex-row items-center justify-between pt-2 border-t border-zinc-200">
-              <Text className="text-base font-bold text-zinc-900">Total</Text>
-              <Text className="text-base font-bold text-zinc-900">{formatCurrency(order.total)}</Text>
+            <View style={[styles.totalRow, styles.grandTotalRow]}>
+              <Text style={styles.grandTotalLabel}>Total</Text>
+              <Text style={styles.grandTotalValue}>{formatCurrency(order.total)}</Text>
             </View>
           </View>
         </View>
 
-        <View className="bg-white rounded-xl p-4 mb-4 border border-zinc-200">
-          <Text className="text-base font-semibold text-zinc-900 mb-3">Customer Info</Text>
+        {/* Customer Info Card */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Customer Info</Text>
           {order.customerName && (
-            <View className="flex-row items-center mb-1">
-              <Text className="text-sm text-zinc-500 w-20">Name:</Text>
-              <Text className="text-sm text-zinc-900">{order.customerName}</Text>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Name:</Text>
+              <Text style={styles.infoValue}>{order.customerName}</Text>
             </View>
           )}
           {order.customerPhone && (
-            <View className="flex-row items-center mb-1">
-              <Text className="text-sm text-zinc-500 w-20">Phone:</Text>
-              <Text className="text-sm text-zinc-900">{order.customerPhone}</Text>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Phone:</Text>
+              <Text style={styles.infoValue}>{order.customerPhone}</Text>
             </View>
           )}
           {order.deliveryAddress && (
-            <View className="flex-row items-start mt-1">
-              <Text className="text-sm text-zinc-500 w-20">Address:</Text>
-              <Text className="text-sm text-zinc-900 flex-1">{order.deliveryAddress}</Text>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Address:</Text>
+              <Text style={[styles.infoValue, styles.infoValueFlex]}>{order.deliveryAddress}</Text>
             </View>
           )}
         </View>
 
+        {/* Special Notes Card */}
         {order.notes && (
-          <View className="bg-white rounded-xl p-4 mb-4 border border-zinc-200">
-            <Text className="text-base font-semibold text-zinc-900 mb-2">Special Notes</Text>
-            <Text className="text-sm text-zinc-700">{order.notes}</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Special Notes</Text>
+            <Text style={styles.notesText}>{order.notes}</Text>
           </View>
         )}
 
+        {/* Action Button */}
         {actionButton && !['Completed', 'Cancelled'].includes(order.status) && (
-          <View className="mb-8">
+          <View style={styles.actionContainer}>
             <TouchableOpacity
               onPress={() =>
                 showConfirmation('Confirm Action', `Are you sure you want to ${actionButton.text.toLowerCase()}?`, () =>
@@ -164,17 +171,236 @@ export const OrderDetailScreen = ({ navigation, route }: OrderDetailScreenProps)
                 )
               }
               disabled={actionLoading}
-              className={`py-4 rounded-xl items-center ${
-                ['Preparing', 'Ready'].includes(order.status) ? 'bg-brand-success' : 'bg-brand-primary'
-              }`}
+              style={[
+                styles.actionButton,
+                isReadyAction ? styles.actionButtonSuccess : styles.actionButtonPrimary,
+                actionLoading && styles.actionButtonDisabled,
+              ]}
             >
-              <Text className="text-white text-base font-semibold">
+              <Text style={styles.actionButtonText}>
                 {actionLoading ? 'Processing...' : actionButton.text}
               </Text>
             </TouchableOpacity>
           </View>
         )}
+
+        <View style={styles.bottomSpacer} />
       </ScrollView>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F9FAFB',
+  },
+  loadingText: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#6B7280',
+    fontFamily: 'Inter-Regular',
+    marginTop: 12,
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  orderTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    fontFamily: 'Inter-Bold',
+  },
+  headerSpacer: {
+    width: 64,
+  },
+  scrollContent: {
+    flex: 1,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  cardLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#6B7280',
+    fontFamily: 'Inter-Medium',
+    marginBottom: 8,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    fontFamily: 'Inter-SemiBold',
+    marginBottom: 12,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  updatedText: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#9CA3AF',
+    fontFamily: 'Inter-Regular',
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  itemInfo: {
+    flex: 1,
+  },
+  itemName: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: '#111827',
+    fontFamily: 'Inter-Regular',
+    marginBottom: 2,
+  },
+  itemQty: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: '#6B7280',
+    fontFamily: 'Inter-Regular',
+  },
+  itemPrice: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#111827',
+    fontFamily: 'Inter-Medium',
+  },
+  divider: {
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    marginTop: 12,
+    paddingTop: 12,
+  },
+  totalsContainer: {
+    marginTop: 8,
+  },
+  totalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  totalLabel: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#6B7280',
+    fontFamily: 'Inter-Regular',
+  },
+  totalValue: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#111827',
+    fontFamily: 'Inter-Medium',
+  },
+  discountValue: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#10B981',
+    fontFamily: 'Inter-Medium',
+  },
+  grandTotalRow: {
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    paddingTop: 12,
+    marginTop: 6,
+  },
+  grandTotalLabel: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    fontFamily: 'Inter-Bold',
+  },
+  grandTotalValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    fontFamily: 'Inter-Bold',
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  infoLabel: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#6B7280',
+    fontFamily: 'Inter-Regular',
+    width: 60,
+  },
+  infoValue: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#111827',
+    fontFamily: 'Inter-Regular',
+  },
+  infoValueFlex: {
+    flex: 1,
+  },
+  notesText: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#374151',
+    fontFamily: 'Inter-Regular',
+    lineHeight: 20,
+  },
+  actionContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+    paddingTop: 8,
+  },
+  actionButton: {
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 52,
+  },
+  actionButtonPrimary: {
+    backgroundColor: '#4F46E5',
+  },
+  actionButtonSuccess: {
+    backgroundColor: '#10B981',
+  },
+  actionButtonDisabled: {
+    backgroundColor: '#E5E7EB',
+  },
+  actionButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    fontFamily: 'Inter-SemiBold',
+  },
+  bottomSpacer: {
+    height: 16,
+  },
+});

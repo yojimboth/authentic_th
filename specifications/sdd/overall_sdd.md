@@ -18,7 +18,7 @@ authentic_th/
 ├── Cargo.toml              # Workspace configuration
 ├── crates/
 │   ├── auth/               # Identity, JWT, RBAC, Session management
-│   ├── tenants/            # Tenant provisioning, subscription, isolation logic
+│   ├── tenants/            # Tenant provisioning, onboarding, and isolation logic
 │   ├── orders/             # Order lifecycle, state machine, validation
 │   ├── loyalty/            # Points calculation, rewards, transaction ledgers
 │   ├── common/             # Shared types, Error model, DB connection pooling
@@ -70,7 +70,7 @@ To ensure consistent API responses, the system utilizes a hierarchical error mod
 The system employs a **Shared Schema, Discriminator Column** approach to multi-tenancy. Every table containing tenant-specific data MUST include a `tenant_id` column.
 
 #### Core Entities
-- **`tenants`**: `id (UUID, PK)`, `name`, `domain`, `subscription_plan`, `logo_url (TEXT, nullable)`, `created_at`.
+- **`tenants`**: `id (UUID, PK)`, `name`, `domain`, `status`, `logo_url (TEXT, nullable)`, `created_at`.
 - **`users`**: `id (UUID, PK)`, `tenant_id (FK)`, `email`, `password_hash`, `role_id (FK)`.
 - **`orders`**: `id (UUID, PK)`, `tenant_id (FK)`, `customer_id`, `total_amount`, `status`, `created_at`.
 - **`menus`**: `id (UUID, PK)`, `tenant_id (FK)`, `category`, `item_name`, `price`, `is_available`.

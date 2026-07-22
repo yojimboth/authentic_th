@@ -1,5 +1,17 @@
-import * as Crypto from 'expo-crypto';
 import * as SecureStore from 'expo-secure-store';
+
+/**
+ * Native-free random generators (replaces expo-crypto).
+ * These are sufficient for mock/auth testing purposes.
+ */
+const randomHex = (bytes: number): string => {
+  const chars = '0123456789abcdef';
+  let result = '';
+  for (let i = 0; i < bytes; i++) {
+    result += chars[Math.floor(Math.random() * 16)];
+  }
+  return result;
+};
 
 const AUTH_TOKEN_KEY = 'restaurant_auth_token';
 
@@ -11,10 +23,7 @@ const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
 let lockoutUntil: number | null = null;
 
 export const generateMockToken = (): string => {
-  const randomBytes = Crypto.getRandomBytes(16);
-  const randomPart = Array.from(randomBytes)
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
+  const randomPart = randomHex(16);
   return `mock-jwt-${Date.now()}-${randomPart}`;
 };
 

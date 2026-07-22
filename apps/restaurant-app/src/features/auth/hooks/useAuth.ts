@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../../../store/authStore';
-import { login as mockLogin, logout as mockLogout } from '../../../utils/mockAuth';
+import { login as mockLogin, logout as mockLogout, getToken, isTokenValid } from '../../../utils/mockAuth';
 import { RestaurantOwner } from '../types';
 
 export const useAuth = () => {
@@ -10,19 +10,24 @@ export const useAuth = () => {
 
   const checkSession = async () => {
     try {
-      const token = await mockLogin();
-      const mockUser: RestaurantOwner = {
-        id: 'usr_123',
-        tenantId: 'tenant_siam_001',
-        fullName: 'John Smith',
-        email: 'john@siamauthentic.com',
-        phone: '0412345678',
-        role: 'owner',
-        primaryAddress: '123 Restaurant St, Sydney NSW 2000',
-      };
-      setTokens(token, 'mock-refresh-token');
-      setUser(mockUser);
-      return { success: true };
+      // Only restore session if a valid token already exists
+      const existingToken = await getToken();
+      if (existingToken && isTokenValid(existingToken)) {
+        const mockUser: RestaurantOwner = {
+          id: 'usr_123',
+          tenantId: 'tenant_siam_001',
+          fullName: 'John Smith',
+          email: 'john@siamauthentic.com',
+          phone: '0412345678',
+          role: 'owner',
+          primaryAddress: '123 Restaurant St, Sydney NSW 2000',
+        };
+        setTokens(existingToken, 'mock-refresh-token');
+        setUser(mockUser);
+        return { success: true };
+      }
+      // No valid session to restore
+      return { success: false };
     } catch (err) {
       return { success: false };
     }

@@ -23,7 +23,7 @@ src/
 ├── features/               # Domain-driven feature modules
 │   ├── auth/               # Login, Session Management, Password Reset
 │   ├── tenant-mgmt/        # UR-A01: Tenant CRUD, Status Control (Active/Suspended)
-│   ├── billing-config/     # Global Fee Settings, Subscription Plan definitions
+│   ├── billing-config/     # Global Fee Settings, Platform Fee Configuration
 │   ├── global-reports/     # Aggregated KPIs, Revenue Analytics, System Health
 │   ├── loyalty-settings/   # UR-A02: Global Loyalty Rules, Point Conversion Rates
 │   └── compliance/         # PDPA audits, Data Purge requests, Privacy Logs
@@ -49,7 +49,7 @@ Each module within `features/` follows a consistent internal layout:
 The dashboard serves as the entry point for the Founder/Co-founder.
 - **KPI Tiles**: Real-time counters for Total Active Tenants, Total Orders (24h), Total GMV, and System Error Rate.
 - **System Health Monitor**: A visual indicator of API latency and database health (connecting to `UR-A03`).
-- **Active Alerts**: A notification feed for tenant subscription expirations or critical system failures.
+- **Active Alerts**: A notification feed for tenant account suspensions or critical system failures.
 
 ### 2.2 Management Tables (Complex Data Grids)
 Used extensively in `tenant-mgmt` and `compliance`.
@@ -84,7 +84,6 @@ export interface TenantAccount {
   id: string;              // UUID
   name: string;
   domain: string;
-  subscriptionPlan: 'Free' | 'Basic' | 'Enterprise';
   status: 'Active' | 'Suspended' | 'Pending';
   createdAt: string;       // ISO Date
 }

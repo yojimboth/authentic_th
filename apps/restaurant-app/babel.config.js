@@ -3,6 +3,6 @@ module.exports = function (api) {
   const isTest = process.env.JEST_WORKER_ID !== undefined;
   return {
     presets: ['babel-preset-expo'],
-    plugins: isTest ? [] : ['nativewind/babel'],
+    plugins: [],
   };
 };

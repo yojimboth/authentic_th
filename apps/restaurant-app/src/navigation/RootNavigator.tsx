@@ -7,6 +7,9 @@ import { LoginScreen } from '../features/auth/components/LoginScreen';
 import { OrderDetailScreen } from '../features/orders/screens/OrderDetailScreen';
 import { EditItemScreen } from '../features/menu/screens/EditItemScreen';
 import { EditProfileScreen } from '../features/profile/screens/EditProfileScreen';
+import { NotificationPreferencesScreen } from '../features/profile/screens/NotificationPreferencesScreen';
+import { PrinterConfigurationScreen } from '../features/printer/screens/PrinterConfigurationScreen';
+import { HelpSupportScreen } from '../features/help/support/HelpSupportScreen';
 import { MainTabsNavigator } from './MainTabsNavigator';
 import { useAuthStore } from '../store/authStore';
 import { RootStackParamList, MainTabParamList } from './types';
@@ -40,7 +43,8 @@ export function RootNavigator() {
               <SplashScreen
                 {...props}
                 onComplete={() => {
-                  // After splash, token is validated; show Login
+                  // After splash, navigate to Login
+                  props.navigation.navigate('Login');
                 }}
               />
             )}
@@ -64,6 +68,21 @@ export function RootNavigator() {
             name="EditProfile"
             component={EditProfileScreen}
             options={{ headerShown: true, headerTitle: 'Edit Profile' }}
+          />
+          <Stack.Screen
+            name="NotificationPreferences"
+            component={NotificationPreferencesScreen}
+            options={{ headerShown: true, headerTitle: 'Notification Preferences' }}
+          />
+          <Stack.Screen
+            name="PrinterConfiguration"
+            component={PrinterConfigurationScreen}
+            options={{ headerShown: true, headerTitle: 'Printer Configuration' }}
+          />
+          <Stack.Screen
+            name="HelpSupport"
+            component={HelpSupportScreen}
+            options={{ headerShown: true, headerTitle: 'Help & Support' }}
           />
         </>
       )}
