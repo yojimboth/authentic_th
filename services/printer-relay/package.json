@@ -1,0 +1,16 @@
+{
+  "name": "printer-relay",
+  "version": "0.1.0",
+  "description": "Cloud-to-local printer relay service for ESC/POS thermal printers",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": ["printer", "escpos", "relay", "thermal"],
+  "author": "Authentic TH",
+  "license": "MIT",
+  "dependencies": {
+    "net": "^0.11.0"
+  }
+}
