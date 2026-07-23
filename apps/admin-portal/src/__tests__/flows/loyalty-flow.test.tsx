@@ -18,9 +18,9 @@ vi.mock('../../features/loyalty-settings/hooks/useLoyalty', () => ({
 }));
 
 // Mock uiStore
-const mockShowToast = vi.fn();
-vi.mock('../../store/uiStore', () => ({
-  useUIStore: () => ({
+vi.mock('../../store/uiStore', () => {
+  const mockShowToast = vi.fn();
+  const mockStoreState = {
     sidebarOpen: true,
     toast: null,
     toggleSidebar: vi.fn(),
@@ -28,8 +28,16 @@ vi.mock('../../store/uiStore', () => ({
     hideSidebar: vi.fn(),
     showToast: mockShowToast,
     hideToast: vi.fn(),
-  }),
-}));
+  };
+  const useUIStore = ((selector?: any) => {
+    if (selector) {
+      return selector(mockStoreState);
+    }
+    return mockStoreState;
+  }) as any;
+  useUIStore.__store = mockStoreState;
+  return { useUIStore };
+});
 
 describe('Loyalty Config Flow', () => {
   beforeEach(() => {
@@ -42,7 +50,6 @@ describe('Loyalty Config Flow', () => {
       isAuthenticated: true,
     });
     settings = { conversionRate: 1.0, allowOverride: false };
-    mockShowToast.mockClear();
   });
 
   it('TC-FLOW-004: should render loyalty settings page and interact', async () => {

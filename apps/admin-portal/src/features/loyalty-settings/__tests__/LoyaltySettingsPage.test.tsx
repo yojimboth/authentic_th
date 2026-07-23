@@ -18,9 +18,9 @@ vi.mock('../hooks/useLoyalty', () => ({
 }));
 
 // Mock uiStore
-const mockShowToast = vi.fn();
-vi.mock('../../../store/uiStore', () => ({
-  useUIStore: () => ({
+vi.mock('../../../store/uiStore', () => {
+  const mockShowToast = vi.fn();
+  const mockStoreState = {
     sidebarOpen: true,
     toast: null,
     toggleSidebar: vi.fn(),
@@ -28,8 +28,16 @@ vi.mock('../../../store/uiStore', () => ({
     hideSidebar: vi.fn(),
     showToast: mockShowToast,
     hideToast: vi.fn(),
-  }),
-}));
+  };
+  const useUIStore = ((selector?: any) => {
+    if (selector) {
+      return selector(mockStoreState);
+    }
+    return mockStoreState;
+  }) as any;
+  useUIStore.__store = mockStoreState;
+  return { useUIStore };
+});
 
 describe('LoyaltySettingsPage', () => {
   beforeEach(() => {
@@ -42,7 +50,6 @@ describe('LoyaltySettingsPage', () => {
       isAuthenticated: true,
     });
     settings = { conversionRate: 1.0, allowOverride: false };
-    mockShowToast.mockClear();
   });
 
   it('TC-COMP-011: should render loyalty settings form', async () => {
