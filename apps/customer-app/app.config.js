@@ -8,7 +8,7 @@ export default ({ config }) => {
   // man-in-the-middle attacks on public networks.
   // See: https://docs.expo.dev/guides/security/
   // For now, ensure all API calls use HTTPS (enforced by Axios configuration)
-  const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000';
+  const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8113';
   const ENABLE_BIOMETRIC = process.env.ENABLE_BIOMETRIC_AUTH === 'true';
   const ENABLE_AUDIT_LOGGING = process.env.ENABLE_AUDIT_LOGGING === 'true';
 

@@ -11,7 +11,7 @@ pub struct Config {
 impl Config {
     pub fn from_env() -> Self {
         Config {
-            port: env::var("PORT").unwrap_or_else(|_| "8080".to_string()).parse().unwrap_or(8080),
+            port: env::var("PORT").unwrap_or_else(|_| "8113".to_string()).parse().unwrap_or(8113),
             database_url: env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost/authentic_th".to_string()),
             jwt_secret: env::var("JWT_SECRET").unwrap_or_else(|_| "your-secret-key-change-in-production".to_string()),
             environment: env::var("NODE_ENV").unwrap_or_else(|_| "development".to_string()),
